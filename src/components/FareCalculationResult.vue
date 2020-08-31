@@ -59,9 +59,9 @@ export default {
       map_url: String,
       startAddress: String,
       endAddress: String,
-      distance:  Number,
-      traveltime: Number,
-      farePrice: Number 
+      distance:  String,
+      traveltime: String,
+      farePrice: String 
     },
     mounted() {
       setTimeout(function(){

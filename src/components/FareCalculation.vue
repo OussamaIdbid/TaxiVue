@@ -27,7 +27,7 @@
                 field="title"
                 
                 icon="map-marker"
-                
+                clearable
                 
                 :loading="isFetchingStart"
                 
@@ -36,16 +36,7 @@
                       <template slot="empty">No results found</template>
                   </b-autocomplete>
               </b-field>
-                <!-- <input
-                  id="start-input"
-                  class="input"
-                  type="text"
-                  placeholder=""
-                  v-model="StartInput"
-                  v-on:keyup="placesSearchStart(StartInput); FareCalculateValidation();"
-                  
-      
-                /> -->
+
 
             </div>
             <div class="field mb-5">
@@ -57,6 +48,7 @@
                 type="is-danger"
                 placeholder="Voer een adres in"
                 field="title"
+                clearable
         
                 :loading="isFetchingEnd"
                   @select="assignTagEnd($event)"
@@ -65,14 +57,6 @@
                   </b-autocomplete>
               </b-field>
               
-                <!-- <input
-                  id="end-input"
-                  class="input"
-                  type="text"
-                  placeholder=""
-                  v-model="EndInput"
-                  v-on:keyup="placesSearchEnd(EndInput); FareCalculateValidation(); "
-                /> -->
 
               
             </div>

@@ -1,5 +1,6 @@
 <template>
-    <form>
+<section class="section is-large">
+<form>
         <div class="form-group">
             <label for="exampleInputEmail1">name</label>
             <input type="text" v-model="form.name" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
@@ -32,6 +33,8 @@
         </div>
         <button type="submit" @click.prevent="register" class="btn btn-primary">Submit</button>
     </form>
+</section>
+    
 </template>
 
 <script>

@@ -326,4 +326,8 @@ button:focus {
     visibility: hidden;
 }
 
+.control.has-icons-left .icon,
+.control.has-icons-right .icon {
+  pointer-events: auto !important;
+}
 </style>

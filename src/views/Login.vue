@@ -4,27 +4,25 @@
         <div class="container">
             <div class="columns is-centered is-half">
                 <div class="column is-half">
-                    <div class="field">
-                        <label for="" class="label">Email</label>
-                        <div class="control">
-                            <input class="input is-primary" type="email" placeholder=""/>
-                        </div>
-                    </div>     
-                    <div class="field">
-                        <label for="" class="label">Wachtwoord</label>
-                        <div class="control">
-                            <input class="input is-primary" type="password" placeholder=""/>
-                        </div>
-                    </div>
-                    <b-button expanded="true" type="is-danger">Log in</b-button>  
+                    <b-field label="Email">
+                        
+
+                            <b-input type="email"  v-model="form.email"></b-input>
+
+                    </b-field>
+                        
+                    <b-field label="Password">
+                        
+
+                            <b-input v-model="form.password" type="password" password-reveal></b-input>
+
+                     </b-field>
+                    <b-button @click.prevent="login" expanded=true type="is-danger">Log in</b-button>  
                 </div>
-                <div class="is-divider" data-content="of"></div>
+                <div class="is-divider" data-content="NIEUWE KLANT"></div>
                     <div class="column is-half">
-                        <b-button expanded="true" type="is-danger">Maak een account aan</b-button>  
+                        <b-button tag="router-link" to="/register" type="is-link is-danger" expanded=true >Maak een account aan</b-button>  
                     </div>
-
-
-                  
             </div>
 
         </div>
@@ -100,5 +98,4 @@
     background: #f5f5f5;
 
 }
-
 </style>
