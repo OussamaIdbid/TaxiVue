@@ -1,5 +1,35 @@
 <template>
-    <form>
+
+    <section class="section is-large">
+        <div class="container">
+            <div class="columns is-centered is-half">
+                <div class="column is-half">
+                    <div class="field">
+                        <label for="" class="label">Email</label>
+                        <div class="control">
+                            <input class="input is-primary" type="email" placeholder=""/>
+                        </div>
+                    </div>     
+                    <div class="field">
+                        <label for="" class="label">Wachtwoord</label>
+                        <div class="control">
+                            <input class="input is-primary" type="password" placeholder=""/>
+                        </div>
+                    </div>
+                    <b-button expanded="true" type="is-danger">Log in</b-button>  
+                </div>
+                <div class="is-divider" data-content="of"></div>
+                    <div class="column is-half">
+                        <b-button expanded="true" type="is-danger">Maak een account aan</b-button>  
+                    </div>
+
+
+                  
+            </div>
+
+        </div>
+    </section>
+    <!-- <form>
         <div class="form-group">
             <label for="exampleInputEmail1">Email address</label>
             <input type="email" v-model="form.email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
@@ -20,7 +50,7 @@
             <label class="form-check-label" for="exampleCheck1">Check me out</label>
         </div>
         <button @click.prevent="login" class="btn btn-primary">Submit</button>
-    </form>
+    </form> -->
 </template>
 
 <script>
@@ -57,5 +87,18 @@
 </script>
 
 <style scoped>
+.columns {
+
+    flex-direction: column;
+
+}
+.column {
+    margin-bottom: 2rem;
+    align-self: center;
+}
+.is-divider[data-content]::after {
+    background: #f5f5f5;
+
+}
 
 </style>

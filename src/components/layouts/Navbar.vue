@@ -10,12 +10,6 @@
             </b-navbar-item>
         </template>
         <template slot="start">
-            <b-navbar-item href="#section_1">
-                Home
-            </b-navbar-item>
-            <b-navbar-item href="#section_3">
-                Over ons
-            </b-navbar-item>
             <b-navbar-item v-if="!isLoggedIn" tag="router-link" :to="{ path: '/login' }" >
                 Login
             </b-navbar-item>
@@ -40,9 +34,6 @@
                     </b-button>
                     <b-button type="is-danger" icon-left="phone" href="tel:0362340021" onclick="return gtag_report_conversion('tel:0362340021');"  >
                          036 - 2340021 Almere
-                    </b-button>
-                    <b-button type="is-danger" @click="testRouter">
-                      testststs
                     </b-button>
                 </div>
                 
