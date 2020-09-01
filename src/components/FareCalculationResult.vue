@@ -37,7 +37,7 @@
                 <p id="fare-text">Ritprijs:</p>   
                 <p id="fare-amount">€{{farePrice}}</p>
               </div>             
-              <button class="button is-danger is-fullwidth" id='back-home'>Terug naar Home</button>
+              <button class="button is-danger is-fullwidth" id='back-home' @click="backToHome">Terug naar Home</button>
               
             </div>
           </div>
@@ -63,10 +63,18 @@ export default {
       traveltime: String,
       farePrice: String 
     },
+    methods: {
+      backToHome() {
+        this.$router.push({name: 'Home'})
+      }
+    },
     mounted() {
       setTimeout(function(){
         $('.pageloader').removeClass("is-active")
-      },3000)
+      },3000);
+
+        window.scrollTo(0, 0)
+        
     }
 }
 </script>

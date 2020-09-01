@@ -20,6 +20,9 @@ export default {
       clicked: false
     }
   },
+    mounted () {
+        window.scrollTo(0, 0)
+    },
   methods: {
       onChildClick(value) {
           this.returnedData = value[0]

@@ -39,10 +39,12 @@ export default {
 
 <style>
 *{
-    font-family: 'Lato', sans-serif;
+    font-family: 'Roboto', sans-serif;
 }
 html{
     scroll-behavior: smooth;
+            background-color: #fafafa !important;
+
 }
 body{
     background-color: #f5f5f5;
@@ -330,4 +332,17 @@ button:focus {
 .control.has-icons-right .icon {
   pointer-events: auto !important;
 }
+.mdi-24px.mdi-set, .mdi-24px.mdi:before {
+    color: #f14668 !important;
+}
+.svg-inline--fa.fa-w-20 {
+    color: #f14668;
+}
+    .help {
+    color: #f14668 !important;
+    }
+
+    .navbar , .navbar-menu {
+        background-color: #f5f5f5 !important ;
+    }
 </style>

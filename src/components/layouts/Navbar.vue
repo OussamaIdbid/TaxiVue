@@ -13,9 +13,6 @@
             <b-navbar-item v-if="!isLoggedIn" tag="router-link" :to="{ path: '/login' }" >
                 Login
             </b-navbar-item>
-             <b-navbar-item v-if="!isLoggedIn" tag="router-link" :to="{ path: '/register' }" >
-                register
-            </b-navbar-item>
             <b-navbar-item v-if="isLoggedIn" tag="router-link" :to="{ path: '/dashboard' }" >
                 dashboard
             </b-navbar-item>

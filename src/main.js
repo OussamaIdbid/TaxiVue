@@ -9,7 +9,6 @@ import Buefy from 'buefy'
 import 'buefy/dist/buefy.css'
 import VueResource from 'vue-resource'
 import router from './router'
-//import "~@creativebulma/bulma-divider";
 
 Vue.use(Buefy)
 Vue.use(VueResource)
