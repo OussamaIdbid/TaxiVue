@@ -1,8 +1,8 @@
 <template>
   <section class="section is-large">
     <div class="container">
-      <div class="columns is-centered is-half">
-        <div class="column is-half">
+      <div class="columns is-centered">
+        <div class="column  is-one-third">
           <div class="card">
             <header class="card-header">
               <p class="card-header-title">Log in</p>
@@ -20,7 +20,7 @@
           </div>
         </div>
         <div class="is-divider" data-content="NIEUWE KLANT"></div>
-        <div class="column is-half">
+        <div class="column is-one-third">
           <b-button
             tag="router-link"
             to="/register"

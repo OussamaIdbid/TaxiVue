@@ -2,7 +2,7 @@
   <section class="section is-medium">
     <div class="container">
       <div class="columns is-centered">
-        <div class="column is-half">
+        <div class="column is-one-third">
           <div class="card">
             <div class="card-content">
               <b-field label="Voornaam">
