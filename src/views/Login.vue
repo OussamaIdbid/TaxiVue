@@ -8,6 +8,7 @@
               <p class="card-header-title">Log in</p>
             </header>
             <div class="card-content">
+
               <b-field label="Email" :message="errors.email">
                 <b-input type="email" v-model="form.email"></b-input>
               </b-field>
@@ -19,8 +20,9 @@
             <b-loading :is-full-page="false" v-model="isLoading" :can-cancel="true"></b-loading>
           </div>
         </div>
-        <div class="is-divider" data-content="NIEUWE KLANT"></div>
+
         <div class="column is-one-third">
+                  <div class="is-divider" data-content="Of"></div>
           <b-button
             tag="router-link"
             to="/register"
@@ -75,10 +77,16 @@ export default {
   flex-direction: column;
 }
 .column {
-  margin-bottom: 2rem;
   align-self: center;
 }
 .is-divider[data-content]::after {
   background: #f5f5f5;
+  color: black;
+}
+.is-divider, .is-divider-vertical{
+  border-top: .1rem solid black;
+}
+.card-header-title{
+  justify-content: center;
 }
 </style>

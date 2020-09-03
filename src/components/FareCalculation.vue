@@ -162,6 +162,8 @@ export default {
             farePrice: this.returnResult[0].farePrice,
           },
         });
+        localStorage.setItem("calculated", true);
+
       }, 1000);
     },
     /**

@@ -21,6 +21,7 @@ Vue.use(VueRouter)
     name: 'FareCalculationResult',
     component: () => import(/* webpackChunkName: "about" */ '../components/FareCalculationResult.vue'),
     props:true,
+    meta: {CalculatedOnly: true}
     
 
 
@@ -56,6 +57,9 @@ const router = new VueRouter({
 function isLoggedIn() {
   return localStorage.getItem("auth")
 }
+function isCalculated() {
+  return localStorage.getItem("calculated")
+}
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.authOnly)) {
@@ -84,4 +88,22 @@ router.beforeEach((to, from, next) => {
     next() // make sure to always call next()!
   }
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.CalculatedOnly)) {
+    // this route requires auth, check if logged in
+    // if not, redirect to login page.
+    if (!isCalculated()) {
+      next({
+        path: '/',
+        query: { redirect: to.fullPath }
+      })
+    } else {
+      next()
+    }
+  } else {
+    next() // make sure to always call next()!
+  }
+})
+
 export default router

@@ -21,9 +21,14 @@ export default {
     },
 
     auth() {
-        
 
         return Api.get('/user');
+    },
+    update(form) {
+        return Api.post('/edit/user', form)
+    },
+    changePassword(form) {
+        return Api.post('/edit/password/user', form)
     }
 
 };

@@ -71,7 +71,10 @@ export default {
     mounted() {
       setTimeout(function(){
         $('.pageloader').removeClass("is-active")
+        localStorage.setItem("calculated", false)
       },3000);
+
+
 
         window.scrollTo(0, 0)
         

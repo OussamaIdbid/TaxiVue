@@ -5,12 +5,14 @@
         <div class="column is-one-third">
           <div class="card">
             <div class="card-content">
-              <b-field label="Voornaam">
-                <b-input type="text" v-model="firstName"></b-input>
-              </b-field>
-              <b-field label="Achternaam">
-                <b-input type="text" v-model="lastName"></b-input>
-              </b-field>
+              <b-field grouped>
+                <b-field expanded=true label="Voornaam" :message="errors.name">
+                  <b-input  type="text" v-model="firstName"></b-input>
+                </b-field>
+                <b-field expanded=true label="Achternaam" :message="errors.name">
+                  <b-input  type="text" v-model="lastName"></b-input>
+                </b-field>               
+              </b-field> 
               <b-field label="Email" :message="errors.email">
                 <b-input type="email" v-model="form.email"></b-input>
               </b-field>
