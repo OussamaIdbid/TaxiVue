@@ -3,6 +3,12 @@
     <div class="container">
       <div class="columns is-centered">
         <div class="column  is-one-third">
+          <b-notification
+              auto-close type="is-info"
+              v-model="isActive"
+              aria-close-label="Close notification" duration=3000>
+              {{verificationMessage}}
+          </b-notification>
           <div class="card">
             <header class="card-header">
               <p class="card-header-title">Log in</p>
@@ -48,6 +54,8 @@ export default {
       },
       errors: [],
       isLoading: false,
+      isActive: false,
+      verificationMessage: ''
     };
   },
   mounted() {
@@ -56,10 +64,19 @@ export default {
   methods: {
     login() {
       User.login(this.form)
-        .then(() => {
-          this.$root.$emit("login", true);
-          localStorage.setItem("auth", "true");
-          this.$router.push({ name: "Dashboard" });
+        .then((response) => {
+          console.log(response)
+          if(response.data.verified == "false"){
+            console.log(response.data.message)
+            this.verificationMessage = response.data.message
+            this.isActive = true
+          }
+          else{
+            this.$root.$emit("login", true);
+            localStorage.setItem("auth", "true");
+            this.$router.push({ name: "Dashboard" });
+          }
+
         })
         .catch((error) => {
           if (error.response.status === 422) {

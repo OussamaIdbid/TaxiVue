@@ -51,11 +51,6 @@
             }
         },
         mounted() {
-            User.auth().then(response => {
-                console.log(response.data)
-                this.user = response.data;
-
-            })
 
         },
         methods: {
