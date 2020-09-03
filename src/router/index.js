@@ -46,6 +46,12 @@ Vue.use(VueRouter)
     meta: {guestOnly: true},
     component: () => import('../views/Register.vue')
   },
+  {
+    path: '/verify-email',
+    name: 'verifyEmail',
+    meta: {guestOnly: true},
+    component: () => import(/* webpackChunkName: "verifyEmail" */ '../components/VerifyEmail.vue'),
+  },
   { path: '*', component: NotFound }
 ]
 

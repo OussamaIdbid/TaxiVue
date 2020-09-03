@@ -66,12 +66,15 @@ export default {
     methods: {
       backToHome() {
         this.$router.push({name: 'Home'})
+        localStorage.removeItem("calculated", false)
+
       }
     },
     mounted() {
+      console.log(this.$route.query)
       setTimeout(function(){
         $('.pageloader').removeClass("is-active")
-        localStorage.setItem("calculated", false)
+        localStorage.removeItem("calculated", false)
       },3000);
 
 

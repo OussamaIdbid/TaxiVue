@@ -161,6 +161,15 @@ export default {
             traveltime: this.returnResult[0].travelTime,
             farePrice: this.returnResult[0].farePrice,
           },
+          // query: {
+          //   map_url: this.returnResult[0].map_url,
+          //   startAddress: this.returnResult[0].startAddress,
+          //   endAddress: this.returnResult[0].endAddress,
+          //   distance: this.returnResult[0].distance,
+          //   traveltime: this.returnResult[0].travelTime,
+          //   farePrice: this.returnResult[0].farePrice,
+          // }
+          //,
         });
         localStorage.setItem("calculated", true);
 

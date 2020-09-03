@@ -3,12 +3,6 @@
     <div class="container">
       <div class="columns is-centered">
         <div class="column  is-one-third">
-          <b-notification
-              auto-close type="is-info"
-              v-model="isActive"
-              aria-close-label="Close notification" duration=3000>
-              {{verificationMessage}}
-          </b-notification>
           <div class="card">
             <header class="card-header">
               <p class="card-header-title">Log in</p>
@@ -21,7 +15,7 @@
               <b-field label="Wachtwoord" :message="errors.password">
                 <b-input v-model="form.password" type="password" password-reveal></b-input>
               </b-field>
-              <b-button @click.prevent="login" expanded="true" type="is-danger">Log in</b-button>
+              <b-button @click.prevent="login" :expanded="true" type="is-danger">Log in</b-button>
             </div>
             <b-loading :is-full-page="false" v-model="isLoading" :can-cancel="true"></b-loading>
           </div>
@@ -33,7 +27,7 @@
             tag="router-link"
             to="/register"
             type="is-link is-danger"
-            expanded="true"
+            :expanded="true"
           >Maak een account aan</b-button>
         </div>
       </div>
@@ -54,7 +48,6 @@ export default {
       },
       errors: [],
       isLoading: false,
-      isActive: false,
       verificationMessage: ''
     };
   },
@@ -69,12 +62,19 @@ export default {
           if(response.data.verified == "false"){
             console.log(response.data.message)
             this.verificationMessage = response.data.message
-            this.isActive = true
+            this.$buefy.toast.open({
+              message: this.verificationMessage,
+              type: 'is-info'
+            })
           }
           else{
             this.$root.$emit("login", true);
             localStorage.setItem("auth", "true");
             this.$router.push({ name: "Dashboard" });
+            this.$buefy.toast.open({
+              message: "Ingelogd",
+              type: 'is-success'
+            })
           }
 
         })

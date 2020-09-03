@@ -29,6 +29,12 @@ export default {
     },
     changePassword(form) {
         return Api.post('/edit/password/user', form)
+    },
+    verifyEmail(payload) {
+        return Api.get('/email-verification', {
+            params: payload
+        })
     }
+
 
 };

@@ -5,26 +5,25 @@
           <div class="card">
             <div class="card-content">
                 <b-field v-bind:expanded=true label="Huidige Wachtwoord" :message="errors.oldPassword">
-                  <b-input v-model="editedPassword.oldPassword" type="password" :disabled="formIsDisabled" password-reveal></b-input>
+                <b-skeleton v-if="isLoading" width="100%" :animated=true></b-skeleton>
+                  <b-input v-if="!isLoading" v-model="editedPassword.oldPassword" type="password" :disabled="formIsDisabled" password-reveal></b-input>
                 </b-field>
                 <b-field v-bind:expanded=true label="Nieuwe Wachtwoord" :message="errors.password" >
-                  <b-input v-model="editedPassword.password"  type="password" :disabled="formIsDisabled" password-reveal></b-input>
+                <b-skeleton v-if="isLoading" width="100%" :animated=true></b-skeleton>
+                  <b-input v-if="!isLoading" v-model="editedPassword.password"  type="password" :disabled="formIsDisabled" password-reveal></b-input>
                 </b-field>               
               <b-field label="Bevestig wachtwoord">
-                <b-input v-model="editedPassword.password_confirmation" type="password" :disabled="formIsDisabled" password-reveal></b-input>
+                <b-skeleton v-if="isLoading" width="100%" :animated=true></b-skeleton>
+                <b-input v-if="!isLoading" v-model="editedPassword.password_confirmation" type="password" :disabled="formIsDisabled" password-reveal></b-input>
               </b-field>
               <div class="buttons">
-                <b-button @click.prevent="changePassword" type="is-danger"> {{buttonText}} </b-button>
+                <b-skeleton v-if="isLoading" width="100%" :animated=true></b-skeleton>
+                <b-button v-if="!isLoading" @click.prevent="changePassword" type="is-danger"> {{buttonText}} </b-button>
                 <b-button @click.prevent="cancel" type="is-danger" v-if="!formIsDisabled"> Annuleer </b-button>
               </div>
+                          
             </div>
          </div>
-        <b-notification
-            auto-close type="is-success"
-            v-model="isActive"
-            aria-close-label="Close notification">
-            Je wachtwoord is bijgewerkt
-        </b-notification>
         </div>
 
       </div>
@@ -47,11 +46,14 @@
                 errors: [],
                 formIsDisabled: true,
                 buttonText: 'Verander Wachtwoord',
-                isActive: false
+                isLoading: false
             }
         },
         mounted() {
+            User.auth().then(response => {
+             this.user = response.data;
 
+            }).then(this.isLoading = false)
         },
         methods: {
             changePassword() {
@@ -71,7 +73,11 @@
                             password: null,
                             password_confirmation: null
                         }
-                        this.isActive = true
+                        //this.isActive = true
+                        this.$buefy.toast.open({
+                            message: 'Je wachtwoord is bijgewerkt',
+                            type: 'is-success'
+                        })
                     })
                     .catch((error) => {
                     if (error.response.status === 422) {
