@@ -23,8 +23,8 @@
 
 <script>
     import User from '../Api/User'
-    import EditUser from '../components/EditUser.vue'
-    import EditPassword from '../components/EditPassword.vue'
+    import EditUser from '../components/auth/EditUser.vue'
+    import EditPassword from '../components/auth/EditPassword'
     export default {
         name: 'Dashboard',
         data() {
@@ -41,6 +41,8 @@
                 console.log(response.data)
                 this.user = response.data;
             })
+
+
 
         },
         methods: {

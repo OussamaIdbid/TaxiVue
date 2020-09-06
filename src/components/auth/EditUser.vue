@@ -35,7 +35,7 @@
 </template>
 
 <script>
-    import User from '../Api/User'
+    import User from '../../Api/User'
 
     export default {
         name: "EditUser",  

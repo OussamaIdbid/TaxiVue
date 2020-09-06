@@ -68,10 +68,11 @@ export default {
         User.logout().then(() => {
           this.isLoggedIn = false;
           localStorage.removeItem("auth");
-          this.$router.push({name: 'Home'})
+          this.$router.push({name: 'Login'})
         })
       }
-    }
+    },
+    
 }
 </script>
 

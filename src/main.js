@@ -9,6 +9,8 @@ import Buefy from 'buefy'
 import 'buefy/dist/buefy.css'
 import VueResource from 'vue-resource'
 import router from './router'
+import store from './Store'
+
 
 Vue.use(Buefy)
 Vue.use(VueResource)
@@ -23,5 +25,6 @@ new Vue({
   },
 
   router,
-  vuetify
+  vuetify,
+  store
 }).$mount('#app')

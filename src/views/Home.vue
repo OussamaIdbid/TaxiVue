@@ -14,14 +14,15 @@ export default {
         Section1,
         Section3
     },
-        data () {
-    return {
-      returnedData: [],
-      clicked: false
-    }
+    data () {
+        return {
+        returnedData: [],
+        clicked: false
+        }
   },
     mounted () {
         window.scrollTo(0, 0)
+
     },
   methods: {
       onChildClick(value) {

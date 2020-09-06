@@ -17,7 +17,7 @@ Vue.use(VueRouter)
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
-    path: '/FareCalculationResult/{map_url}/{startAddress}/{endAddress}/{distance}/{travelTime}/{farePrice}',
+    path: 'FareCalculationResult/{map_url}/{startAddress}/{endAddress}/{distance}/{travelTime}/{farePrice}',
     name: 'FareCalculationResult',
     component: () => import(/* webpackChunkName: "about" */ '../components/FareCalculationResult.vue'),
     props:true,
@@ -50,7 +50,19 @@ Vue.use(VueRouter)
     path: '/verify-email',
     name: 'verifyEmail',
     meta: {guestOnly: true},
-    component: () => import(/* webpackChunkName: "verifyEmail" */ '../components/VerifyEmail.vue'),
+    component: () => import(/* webpackChunkName: "verifyEmail" */ '../components/auth/VerifyEmail.vue'),
+  },
+  {
+    path: '/forgot-password',
+    name: 'forgotPassword',
+    meta: {guestOnly: true},
+    component: () => import(/* webpackChunkName: "verifyEmail" */ '../components/auth/ForgotPassword.vue'),
+  },
+  {
+    path: '/reset-password',
+    name: 'resetPassword',
+    meta: {guestOnly: true},
+    component: () => import(/* webpackChunkName: "verifyEmail" */ '../components/auth/ResetPassword.vue'),
   },
   { path: '*', component: NotFound }
 ]

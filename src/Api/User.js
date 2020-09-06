@@ -34,7 +34,12 @@ export default {
         return Api.get('/email-verification', {
             params: payload
         })
+    },
+    forgotPassword (data) {
+        return Api.post('/forgot-password', data)
+    },
+    resetPassword(data) {
+        return Api.post('/reset-password', data)
     }
-
 
 };

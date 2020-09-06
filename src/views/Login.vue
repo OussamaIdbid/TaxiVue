@@ -15,6 +15,7 @@
               <b-field label="Wachtwoord" :message="errors.password">
                 <b-input v-model="form.password" type="password" password-reveal></b-input>
               </b-field>
+              <router-link class="is-size-7" :to="{ path: '/forgot-password'}">Wachtwoord vergeten?</router-link>
               <b-button @click.prevent="login" :expanded="true" type="is-danger">Log in</b-button>
             </div>
             <b-loading :is-full-page="false" v-model="isLoading" :can-cancel="true"></b-loading>
@@ -53,6 +54,7 @@ export default {
   },
   mounted() {
     window.scrollTo(0, 0);
+    // console.log(this.$store.state.currentUser.user);
   },
   methods: {
     login() {
@@ -68,6 +70,9 @@ export default {
             })
           }
           else{
+            // this.$store.currentUser.commit("setUser", response);
+            // this.$store.currentUser.commit("setLoggedIn", true);
+
             this.$root.$emit("login", true);
             localStorage.setItem("auth", "true");
             this.$router.push({ name: "Dashboard" });

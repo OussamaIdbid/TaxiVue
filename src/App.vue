@@ -15,7 +15,7 @@
 
 import Navbar from './components/layouts/Navbar'
 import Footer from './components/layouts/Footer'
-//import Demo from './components/VuetifyDemo'
+//import Demo from './c0omponents/VuetifyDemo'
 
 
 
@@ -28,10 +28,6 @@ export default {
      Footer
 
     //Demo
-
-  },
-
-  mounted() {
 
   }
 }

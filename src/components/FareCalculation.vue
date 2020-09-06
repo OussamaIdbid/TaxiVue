@@ -146,6 +146,9 @@ export default {
     this.service = this.platform.getSearchService();
     this.router = this.platform.getRoutingService();
   },
+  mounted() {
+    localStorage.setItem("calculated", false)
+  },
   methods: {
     passData() {
       $(".pageloader").addClass("is-active");
