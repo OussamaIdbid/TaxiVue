@@ -4,6 +4,9 @@
       <div class="columns is-centered">
         <div class="column is-one-third">
           <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">Registreer</p>
+            </header>
             <div class="card-content">
               <b-field grouped>
                 <b-field :expanded=true label="Voornaam" :message="errors.name">
@@ -82,4 +85,7 @@ export default {
 </script>
 
 <style scoped>
+.card-header-title{
+  justify-content: center;
+}
 </style>

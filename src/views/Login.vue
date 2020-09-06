@@ -60,7 +60,6 @@ export default {
     login() {
       User.login(this.form)
         .then((response) => {
-          console.log(response)
           if(response.data.verified == "false"){
             console.log(response.data.message)
             this.verificationMessage = response.data.message
@@ -70,8 +69,6 @@ export default {
             })
           }
           else{
-            // this.$store.currentUser.commit("setUser", response);
-            // this.$store.currentUser.commit("setLoggedIn", true);
 
             this.$root.$emit("login", true);
             localStorage.setItem("auth", "true");

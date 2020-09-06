@@ -1,24 +1,17 @@
 <template>
     <div>
         <section class="section is-medium">
+            <div class="columns is-centered">
+                <div class="column is-half">
+                    <h3 class="is-size-3"><strong>Account overzicht</strong></h3>
+                </div>
+            </div>
+
             <EditUser />
             <EditPassword />
         </section>
 
     </div>
-        <!-- <div class="home col-8 mx-auto py-5 mt-5">
-            <h1>Dashboard</h1>
-            <div class="card">
-                <div class="card-body" v-if="user">
-                    <h3>Welcome, {{user.name}}</h3>
-                    <span>{{user.email}}</span>
-
-                    <b-button @click="edit">
-                        edit
-                    </b-button>
-                </div>
-            </div>
-        </div> -->
 </template>
 
 <script>
@@ -56,5 +49,7 @@
 </script>
 
 <style scoped>
-
+    h3 {
+        text-align: center;
+    }
 </style>

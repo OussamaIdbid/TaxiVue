@@ -5,7 +5,9 @@
       <div class="columns is-centered">
         <div class="column  is-one-third">
           <div class="card">
-
+            <header class="card-header">
+              <p class="card-header-title">Reset wachtwoord</p>
+            </header>
             <div class="card-content">
               <b-field label="Email" :message="errors.email">
                 <b-input type="email" v-model="user.email" ></b-input>
@@ -85,5 +87,7 @@ import User from '../../Api/User'
 </script>
 
 <style scoped>
-
+.card-header-title{
+  justify-content: center;
+}
 </style>
