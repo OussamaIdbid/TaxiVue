@@ -1,0 +1,1 @@
+export const DecryptKey = '4MkN8BfGRpNwgUz'

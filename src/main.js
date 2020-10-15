@@ -10,8 +10,11 @@ import 'buefy/dist/buefy.css'
 import VueResource from 'vue-resource'
 import router from './router'
 import store from './Store'
-
-
+import VueCookies from 'vue-cookies'
+import VueCryptojs from 'vue-cryptojs'
+ 
+Vue.use(VueCryptojs)
+Vue.use(VueCookies)
 Vue.use(Buefy)
 Vue.use(VueResource)
 Vue.config.productionTip = false

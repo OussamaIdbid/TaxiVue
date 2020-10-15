@@ -2,7 +2,9 @@
   <div class="container">
     <div class="columns is-centered">
       <div class="column">
-        <h1 id="section_1_heading" class="has-text-white is-size-3">Bereken gemakkelijk je ritprijs</h1>
+        <h1 id="section_1_heading" class="has-text-white is-size-3">
+          Bereken gemakkelijk je ritprijs
+        </h1>
       </div>
     </div>
     <div class="columns is-centered" id="card-container">
@@ -54,32 +56,20 @@
               >
                 <option
                   v-for="category in categories"
-                  v-bind:value="{id: category.id, text: category.name}"
+                  v-bind:value="{ id: category.id, text: category.name }"
                   v-bind:key="category.id"
-                >{{category.name}}</option>
+                  >{{ category.name }}</option
+                >
               </b-select>
             </b-field>
-            <!-- <div class="field">
-              <div class="control has-icons-left">
-                <div class="select">
-                  <select id="person-category" v-model="categorySelect" v-on:change="FareCalculateValidation()">
-                    <option  v-for="category in categories" v-bind:value="{id: category.id, text: category.name}" v-bind:key="category.id"  >{{category.name}}</option>
-                      
-                  </select>
-                </div>
-                <span class="icon is-small has-text-danger is-left">
-                  <i class="fas fa-user-friends is-danger"></i>
-                </span>
-              </div>
-            </div>-->
 
             <button
               id="calculate-fare"
               class="button is-danger has-text-centered is-static is-fullwidth"
-              @click="processForm(); "
-            >Bereken prijs</button>
-
-            <p id="fare-warning-label" class="has-text-danger is-size-6">Voer een volledig adres in</p>
+              @click="processForm()"
+            >
+              Bereken prijs
+            </button>
           </div>
         </div>
       </div>
@@ -91,6 +81,8 @@ import axios from "axios";
 import $ from "jquery";
 import "jquery-ui/ui/widgets/autocomplete";
 import debounce from "lodash/debounce";
+import Reservation from "../Api/Reservation";
+import { DecryptKey } from "../variables.js";
 
 export default {
   name: "FareCalculation",
@@ -130,6 +122,7 @@ export default {
           distance: 0,
           travelTime: 0,
           farePrice: 0,
+          amountOfPeople: "",
         },
       ],
       search: null,
@@ -147,35 +140,46 @@ export default {
     this.router = this.platform.getRoutingService();
   },
   mounted() {
-    localStorage.setItem("calculated", false)
+    localStorage.setItem("calculated", false);
   },
   methods: {
     passData() {
       $(".pageloader").addClass("is-active");
-      setTimeout((response) => {
-        console.log(response);
+      setTimeout(() => {
+        // console.log(response);
         this.$router.push({
           name: "FareCalculationResult",
-          params: {
-            map_url: this.returnResult[0].map_url,
-            startAddress: this.returnResult[0].startAddress,
-            endAddress: this.returnResult[0].endAddress,
-            distance: this.returnResult[0].distance,
-            traveltime: this.returnResult[0].travelTime,
-            farePrice: this.returnResult[0].farePrice,
-          },
-          // query: {
-          //   map_url: this.returnResult[0].map_url,
-          //   startAddress: this.returnResult[0].startAddress,
-          //   endAddress: this.returnResult[0].endAddress,
-          //   distance: this.returnResult[0].distance,
-          //   traveltime: this.returnResult[0].travelTime,
-          //   farePrice: this.returnResult[0].farePrice,
-          // }
-          //,
         });
-        localStorage.setItem("calculated", true);
+        sessionStorage.setItem("map_url", this.returnResult[0].map_url);
+        sessionStorage.setItem(
+          "startAddress",
+          this.CryptoJS.AES.encrypt(
+            this.returnResult[0].startAddress,
+            DecryptKey
+          ).toString()
+        );
+        sessionStorage.setItem(
+          "endAddress",
+          this.CryptoJS.AES.encrypt(
+            this.returnResult[0].endAddress,
+            DecryptKey
+          ).toString()
+        );
+        sessionStorage.setItem("distance", this.returnResult[0].distance);
+        sessionStorage.setItem("traveltime", this.returnResult[0].travelTime);
+        sessionStorage.setItem(
+          "farePrice",
+          this.CryptoJS.AES.encrypt(
+            this.returnResult[0].farePrice,
+            DecryptKey
+          ).toString()
+        );
+        sessionStorage.setItem(
+          "amountOfPeople",
+          this.returnResult[0].amountOfPeople
+        );
 
+        sessionStorage.setItem("calculated", true);
       }, 1000);
     },
     /**
@@ -183,7 +187,7 @@ export default {
      * @param {string} start
      * @param {string} end
      */
-    calculateDistance: function (start, end) {
+    calculateDistance: function(start, end) {
       const params = {
         mode: "fastest;car;traffic:enabled",
         waypoint0: start,
@@ -192,27 +196,21 @@ export default {
         routeAttributes: "summary",
       };
 
-      this.router.calculateRoute(
-        params,
-        (success) => {
-          this.distanceInMeters = success.response.route[0].summary.distance;
-          this.travelTimeInMin =
-            success.response.route[0].summary.trafficTime / 60;
-          this.distanceInKm = this.distanceInMeters / 1000; // convert to KM
+      this.router.calculateRoute(params, (success) => {
+        this.distanceInMeters = success.response.route[0].summary.distance;
+        this.travelTimeInMin =
+          success.response.route[0].summary.trafficTime / 60;
+        this.distanceInKm = this.distanceInMeters / 1000; // convert to KM
 
-          console.log("distance in km is" + this.distanceInKm);
-          console.log("travel time is" + this.travelTimeInMin);
+        // console.log("distance in km is" + this.distanceInKm);
+        // console.log("travel time is" + this.travelTimeInMin);
 
-          this.CalculateTaxiFare(
-            this.distanceInKm,
-            this.travelTimeInMin,
-            this.categorySelect.id
-          );
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
+        this.CalculateTaxiFare(
+          this.distanceInKm,
+          this.travelTimeInMin,
+          this.categorySelect.id
+        );
+      });
     },
     processForm() {
       this.geocodeAddress(this.StartInput).then((response) => {
@@ -230,15 +228,15 @@ export default {
         });
       });
     },
-    assignTagStart: function (selected) {
+    assignTagStart: function(selected) {
       this.StartInput = selected;
       this.FareCalculateValidation();
     },
-    assignTagEnd: function (selected) {
+    assignTagEnd: function(selected) {
       this.EndInput = selected;
       this.FareCalculateValidation();
     },
-    getAsyncDataStart: debounce(function (Q) {
+    getAsyncDataStart: debounce(function(Q) {
       this.placesStart = [];
       if (!Q.length) {
         this.placesStart = [];
@@ -267,7 +265,8 @@ export default {
         });
       this.FareCalculateValidation();
     }, 500),
-    getAsyncDataEnd: debounce(function (Q) {
+
+    getAsyncDataEnd: debounce(function(Q) {
       this.PlacesEnd = [];
       if (!Q.length) {
         this.PlacesEnd = [];
@@ -308,26 +307,12 @@ export default {
         },
         responseType: "json",
       })
-        .then(function (response) {
+        .then(function(response) {
           return response.data.Response.View[0].Result[0];
         })
-        .catch(function (error) {
-          console.log(error);
+        .catch(function() {
+          // console.log(error);
         });
-      //     return $.ajax({
-      //     url: "https://geocoder.ls.hereapi.com/6.2/geocode.json",
-      //     type: "GET",
-      //     dataType: "jsonp",
-      //     jsonp: "jsoncallback",
-      //     data: {
-      //         searchtext: address,
-      //         gen: "9",
-      //         apiKey: this.APIKEY,
-      //     },
-      //     error: function (data) {
-      //         alert(data)
-      //     },
-      // });
     },
 
     /**
@@ -356,20 +341,20 @@ export default {
      * check if every field has been filled in correctly
      */
     FareCalculateValidation() {
-      console.log(this.StartInput);
-      console.log(this.EndInput);
+      // console.log(this.StartInput);
+      // console.log(this.EndInput);
       var startIsValid = this.validateAddress(this.StartInput);
       var endIsValid = this.validateAddress(this.EndInput);
       //var categorySelect = $("#person-category").val();
       if (this.categorySelect.text != null && startIsValid && endIsValid) {
         if (this.StartInput != this.EndInput) {
           $("#calculate-fare").removeClass("is-static");
-          console.log("true");
+          // console.log("true");
         } else {
-          console.log("addresses are the same");
+          // console.log("addresses are the same");
         }
       } else {
-        console.log("false");
+        // console.log("false");
         $("#calculate-fare").addClass("is-static");
       }
     },
@@ -384,7 +369,6 @@ export default {
       for (var i = 0; i < address.length; i++) {
         if (String(address).charAt(i) == ",") {
           amountOfCommas++;
-          //console.log("this tring has " + amountOfCommas + " commas")
         }
       }
       if (amountOfCommas == 2 || amountOfCommas == 3) {
@@ -417,15 +401,16 @@ export default {
           this.travelTimeInMin
         );
         this.returnResult[0].farePrice = this.fare;
-        console.log(this.mapurl);
+        this.returnResult[0].amountOfPeople = this.categorySelect.name;
+        // console.log(this.mapurl);
         this.passData();
       });
     },
     time_convert(num) {
       var hours = Math.floor(num / 60);
       var minutes = num % 60;
-      console.log(hours);
-      console.log(minutes);
+      // console.log(hours);
+      // console.log(minutes);
 
       if (hours == 0) {
         return Math.round(minutes) + " min";
@@ -436,9 +421,13 @@ export default {
     showInput(string) {
       alert(string);
     },
+    test() {
+      Reservation.getReservations().then((response) => {
+        console.log(response);
+      });
+    },
   },
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

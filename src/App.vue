@@ -157,11 +157,11 @@ button:focus {
     flex-direction: row;
 
 }
-#results-tile{
+/* #results-tile{
     display: flex;
     flex-direction: column;
     box-shadow: 0 0.5em 1em -0.125em rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.02);
-}
+} */
 #km-text,#min-text{
     font-size: small;
     margin-bottom: 0;
@@ -245,74 +245,6 @@ button:focus {
         visibility: hidden;
     }
 }
-
-.ui-autocomplete {
-
-    top: 100%;
-    left: 0;
-    z-index: 1000;
-    display: none;
-    float: left;
-    min-width: 160px;
-    padding: 5px 0;
-    margin: 2px 0 0;
-    list-style: none;
-    font-size: 14px;
-    text-align: left;
-    background-color: #ffffff;
-    border: 1px solid #cccccc;
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    border-radius: 4px;
-    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-    background-clip: padding-box;
-  }
-  
-  .ui-autocomplete > li > div {
-    display: block;
-    padding: 3px 20px;
-    clear: both;
-    font-weight: normal;
-    line-height: 1.42857143;
-    color: #333333;
-
-  }
-  
-  .ui-state-hover,
-  .ui-state-active,
-  .ui-state-focus {
-    text-decoration: none;
-    color: #262626;
-    background-color: #f5f5f5;
-    cursor: pointer;
-  }
-  
-  .ui-helper-hidden-accessible {
-    border: 0;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
- 
-    width: 1px;
-  }
-  .ui-autocomplete > li > div:hover{
-      border: none;
-      background-color:#cccccc !important ;
-  }  
-
-  .ui-menu-item .ui-menu-item-wrapper.ui-state-active, option {
-    background: #f5f5f5 !important;
-    color:black !important;
-    border:none !important;
-    max-height: 150px !important;
-    /*width: 250px !important;
-    white-space: nowrap !important; 
-    overflow: hidden !important;
-    text-overflow: ellipsis;*/
-    
-}
 #reserve-column{
     
     display: flex;
@@ -341,6 +273,8 @@ button:focus {
     .navbar , .navbar-menu {
         background-color: #f5f5f5 !important ;
     }
-
+.modal-close{
+    background-color: #f14668 !important;
+}
 
 </style>

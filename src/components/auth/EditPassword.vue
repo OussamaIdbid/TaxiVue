@@ -1,7 +1,7 @@
 <template>
     <div class="container">
       <div class="columns is-centered">
-        <div class="column is-half">
+        <div class="column is-three-quarters">
           <div class="card">
             <div class="card-content">
                 <b-field v-bind:expanded=true label="Huidige Wachtwoord" :message="errors.oldPassword">

@@ -9,7 +9,7 @@
                 </b-icon>
                 </b-navbar-item>
             </template>
-            <template slot="start">
+             <template slot="start">
                 <b-navbar-item v-if="!isLoggedIn" tag="router-link" :to="{ path: '/login' }" >
                     Login
                 </b-navbar-item>
@@ -24,7 +24,7 @@
 
 
             </template>
-          
+           
             <template slot="end">
                 <b-navbar-item tag="div">
                     <div class="buttons">
@@ -47,6 +47,7 @@
 
 <script>
 import User from "../../Api/User"
+//import Csrf from "../../Api/Csrf"
 export default {
     name: 'Navbar',
     data() {
@@ -58,6 +59,15 @@ export default {
 
     },
     mounted() {
+      User.auth()
+      .catch(() => {
+          this.isLoggedIn = false;
+          localStorage.removeItem("auth");
+          if(this.$route.name == 'Dashboard'){
+            this.$router.push({name: 'Home'})
+          }
+
+      })
       this.$root.$on("login", () =>{
         this.isLoggedIn = true;
       })

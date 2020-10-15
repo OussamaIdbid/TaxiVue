@@ -40,6 +40,7 @@ export default {
     },
     resetPassword(data) {
         return Api.post('/reset-password', data)
-    }
+    },
+
 
 };

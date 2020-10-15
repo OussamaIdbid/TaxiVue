@@ -17,13 +17,18 @@ Vue.use(VueRouter)
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
-    path: 'FareCalculationResult/{map_url}/{startAddress}/{endAddress}/{distance}/{travelTime}/{farePrice}',
+    path: '/FareCalculationResult',
     name: 'FareCalculationResult',
-    component: () => import(/* webpackChunkName: "about" */ '../components/FareCalculationResult.vue'),
-    props:true,
-    meta: {CalculatedOnly: true}
-    
+    component: () => import(/* webpackChunkName: "FareCalculationResult" */ '../components/FareCalculationResult.vue'),
+    // meta: {CalculatedOnly: true}
 
+  },
+  {
+    path: '/Reserveer',
+    name: 'ReservationForm',
+    component: () => import(/* webpackChunkName: "ReservationForm" */ '../components/ReservationForm.vue')
+    // props:true,
+    // meta: {CalculatedOnly: true}
 
   },
   {
@@ -56,15 +61,23 @@ Vue.use(VueRouter)
     path: '/forgot-password',
     name: 'forgotPassword',
     meta: {guestOnly: true},
-    component: () => import(/* webpackChunkName: "verifyEmail" */ '../components/auth/ForgotPassword.vue'),
+    component: () => import(/* webpackChunkName: "ForgotPassword" */ '../components/auth/ForgotPassword.vue'),
   },
   {
     path: '/reset-password',
     name: 'resetPassword',
     meta: {guestOnly: true},
-    component: () => import(/* webpackChunkName: "verifyEmail" */ '../components/auth/ResetPassword.vue'),
+    component: () => import(/* webpackChunkName: "ResetPassword" */ '../components/auth/ResetPassword.vue'),
   },
-  { path: '*', component: NotFound }
+  {
+    path: '/payment',
+    name: 'PaymentResult',
+    meta: {authOnly: true},
+    component: () => import(/* webpackChunkName: "PaymentResult" */ '../components/payment/PaymentResult.vue'),
+  },
+  { path: '*',
+    name: 'notFound' ,
+    component: NotFound }
 ]
 
 const router = new VueRouter({
@@ -109,8 +122,6 @@ router.beforeEach((to, from, next) => {
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.CalculatedOnly)) {
-    // this route requires auth, check if logged in
-    // if not, redirect to login page.
     if (!isCalculated()) {
       next({
         path: '/',

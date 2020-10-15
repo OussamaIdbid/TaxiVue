@@ -76,7 +76,7 @@ import User from '../../Api/User'
 </script>
 
 <style scoped>
-.card-header-title{
-  justify-content: center;
-}
+  .card-header-title{
+    justify-content: center;
+  }
 </style>
