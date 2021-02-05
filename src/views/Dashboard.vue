@@ -6,7 +6,6 @@
                     <h3 class="is-size-3"><strong>Account overzicht</strong></h3>
                 </div>
             </div>
-
             <EditUser />
             <EditPassword />
             <ReservationsTable />

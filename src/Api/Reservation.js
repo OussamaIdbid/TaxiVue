@@ -32,6 +32,9 @@ export default {
     Payment(price) {
         return Api.post('/payment/' + price);
     },
+    RefundPayment(PaymentId, refundPrice){
+        return Api.post('/payment/' + PaymentId + '/' + refundPrice);
+    },
     async getWebhook(orderId) {
         await Csrf.getCookie();
         

@@ -401,7 +401,7 @@ export default {
           this.travelTimeInMin
         );
         this.returnResult[0].farePrice = this.fare;
-        this.returnResult[0].amountOfPeople = this.categorySelect.name;
+        this.returnResult[0].amountOfPeople = this.categorySelect.text;
         // console.log(this.mapurl);
         this.passData();
       });

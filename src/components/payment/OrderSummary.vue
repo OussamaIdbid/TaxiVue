@@ -46,6 +46,8 @@
                   <p class="text">Betaalmethode:</p>
                   <p class="amount">{{ paymentMethod }}</p>
                 </div>
+
+                <button @click="refundPayment()">Refund</button>
               </div>
             </div>
           </div>
@@ -88,8 +90,11 @@ export default {
       this.endAddressS = response.data.end_address;
       this.distanceS = response.data.distance;
       this.traveltimeS = response.data.travel_time;
-      this.ReservationDate = response.data.pickup_date;
+      this.ReservationDate = new Date(
+        response.data.pickup_date
+      ).toLocaleDateString("en-GB");
       this.farePriceS = response.data.fare_price;
+      this.paymentID = response.data.payment_id;
 
       Reservation.getWebhook({ id: response.data.payment_id }).then(
         (response) => {
@@ -100,6 +105,14 @@ export default {
       );
     });
   },
+  methods: {
+    refundPayment() {
+      Reservation.RefundPayment(this.paymentID,this.farePriceS)
+      .then( (response) => {
+        console.log(response);
+      });
+    }
+  }
 };
 </script>
 
@@ -155,7 +168,7 @@ export default {
   display: flex;
 }
 .rounded-container {
-  border-radius: 20px ;
+  border-radius: 20px;
 }
 .footer {
 }

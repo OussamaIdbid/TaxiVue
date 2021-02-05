@@ -19,14 +19,15 @@
               </b-field>
               <b-field label="Kies een tijd">
                 <b-timepicker
-                  v-model="time"
+                  
                   placeholder="klik om te selecteren"
                   icon="clock"
                   :time-formatter="TimeFormatter"
                   :enable-seconds="enableSeconds"
+                  :unselectable-times="disabledTimes"
                   :hour-format="hourFormat"
                   :incrementMinutes="minutesGranularity"
-                  :locale="en-US"
+                  locale="en-GB"
                   
                 >
                 </b-timepicker>
@@ -67,20 +68,22 @@ export default {
       Reservationtime: null,
       ReservationNumber: null,
       userID: null,
+      hourFormat: '24' ,
       locale: "en-US", // Browser locale
       minutesGranularity: 5,
-      disabledDates: []
+      disabledDates: [],
+      disabledTimes: []
     };
   },
   methods: {
     DateFormatter(date) {
       this.ReservationDate = date.toLocaleDateString('en-US')
 
-      return this.ReservationDate
+      return date.toLocaleDateString('en-GB')
     },
     TimeFormatter(time) {
-      this.Reservationtime = time.toLocaleTimeString();
-      return time.toLocaleTimeString();
+      this.Reservationtime = time
+      return time.toLocaleTimeString('en-GB');
     },
     Payment() {
 
@@ -103,7 +106,7 @@ export default {
          console.log(key)
          console.log(response.data[key].pickup_date)
           this.disabledDates.push(new Date(response.data[key].pickup_date))
-          
+          this.disabledTimes.push(new Date());
        }
 
      })
