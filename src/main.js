@@ -12,11 +12,15 @@ import router from './router'
 import store from './Store'
 import VueCookies from 'vue-cookies'
 import VueCryptojs from 'vue-cryptojs'
- 
+import MaterialIcons from 'material-design-icons'
+import InfiniteLoading from 'vue-infinite-loading';
+
+Vue.use(InfiniteLoading, { /* options */ });
 Vue.use(VueCryptojs)
 Vue.use(VueCookies)
 Vue.use(Buefy)
 Vue.use(VueResource)
+Vue.use(MaterialIcons)
 Vue.config.productionTip = false
 
 new Vue({

@@ -75,6 +75,12 @@ Vue.use(VueRouter)
     meta: {authOnly: true},
     component: () => import(/* webpackChunkName: "PaymentResult" */ '../components/payment/PaymentResult.vue'),
   },
+  {
+    path: '/reservations',
+    name: 'Reservations',
+    meta: {authOnly: true},
+    component: () => import(/* webpackChunkName: "Reservations" */ '../components/auth/Reservations.vue'),
+  },
   { path: '*',
     name: 'notFound' ,
     component: NotFound }

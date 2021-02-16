@@ -37,8 +37,6 @@
                 this.user = response.data;
             })
 
-
-
         },
         methods: {
             edit(){

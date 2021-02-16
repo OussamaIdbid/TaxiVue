@@ -127,96 +127,6 @@ export default {
           });
         }
       });
-
-    // Reservation.getReservationbyOrderId(this.$route.query.orderID)
-    //   .then((response) => {
-    //     this.OrderIsFound = true;
-    //     this.ReservationUserId = response.data.user_id;
-    //     this.ReservationPaymentId = response.data.payment_id;
-    //     this.startAddress = response.data.start_address;
-    //     this.endAddress = response.data.end_address;
-    //     this.distance = response.data.distance;
-    //     this.travelTime = response.data.travel_time;
-    //     this.farePrice = response.data.fare_price;
-    //     this.ReservationDate = response.data.pickup_date;
-    //     this.map_url = response.data.map_url;
-    //     User.auth().then((response) => {
-    //       this.userID = response.data.id;
-    //       if (this.userID == this.ReservationUserId) {
-    //         this.IsAuthorized = true;
-
-    //         Reservation.getWebhook({
-    //           id: this.ReservationPaymentId,
-    //         }).then((response) => {
-    //           console.log(response.data);
-    //           this.PaymentStatus = response.data.status;
-    //           this.PaymentMethod = response.data.method;
-    //           this.isLoading = false;
-    //         });
-    //       } else {
-    //         this.$router.push({ name: "Home" });
-    //       }
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     if (error.response.status === 404) {
-    //       User.auth().then((response) => {
-    //         this.userID = response.data.id;
-
-    //         this.IsAuthorized = true;
-    //         Reservation.getWebhook({
-    //           id: this.$route.query.paymentID,
-    //         }).then((response) => {
-    //           console.log(response.data);
-    //           if (response.data.status == "paid") {
-    //             this.CreateReservation(this.userID);
-    //           } else if (response.data.status == "canceled") {
-    //             this.$router.push({ name: "FareCalculationResult" });
-    //           }
-    //           else if(response.data.status == "expired"){
-    //             console.log("payment expired")
-    //           }
-    //           else if(response.data.status == "failed"){
-    //             console.log("payment failed")
-    //           }
-    //         });
-    //       });
-    //     }
-    //   });
-
-    // Reservation.getReservationbyOrderId($this.$route.query.orderID)
-    // .then(response => {
-    //     this.ReservationUserId =  response.data.user_id
-    //     User.auth()
-    //     .then(response => {
-    //         this.userID = response.data.id
-    //         if(this.userID == this.ReservationUserId){
-
-    //           Reservation.getReservationbyOrderId(this.$route.query.orderID)
-    //           .then( response => {
-    //               if(response.data.order_id == this.$route.query.orderID){
-    //                   console.log("order already exists")
-    //               }
-
-    //           })
-    //           .catch(
-    //               this.createReservation(this.userID)
-    //           )
-
-    //           }
-    //         else{
-    //           this.$router.push({ name: "Home" });
-    //         }
-
-    //     })
-    // })
-    // this.CreateReservation(1)
-    // Reservation.getWebhook({
-    //   id: paymentID,
-    // }).then((response) => {
-    //   console.log(response.data);
-    //   this.PaymentStatus = response.data.status;
-    // });
   },
   methods: {
     CreateReservation(userID) {
@@ -225,10 +135,22 @@ export default {
           sessionStorage.getItem("startAddress"),
           DecryptKey
         ).toString(this.CryptoJS.enc.Utf8),
+
         end_address: this.CryptoJS.AES.decrypt(
           sessionStorage.getItem("endAddress"),
           DecryptKey
         ).toString(this.CryptoJS.enc.Utf8),
+
+        start_address_geo: this.CryptoJS.AES.decrypt(
+          sessionStorage.getItem("startAddressGeo"),
+          DecryptKey
+        ).toString(this.CryptoJS.enc.Utf8),
+
+        end_address_geo: this.CryptoJS.AES.decrypt(
+          sessionStorage.getItem("endAddressGeo"),
+          DecryptKey
+        ).toString(this.CryptoJS.enc.Utf8),
+        
         amount_of_people: sessionStorage.getItem("amountOfPeople"),
         pickup_date: sessionStorage.getItem("pickup_date"),
         fare_price: this.CryptoJS.AES.decrypt(

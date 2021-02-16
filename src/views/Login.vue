@@ -38,6 +38,7 @@
             >Maak een account aan</b-button
           >
         </div>
+        <test-component></test-component>
       </div>
     </div>
   </section>
@@ -45,6 +46,8 @@
 
 <script>
 import User from "../Api/User";
+import testComponent from "../components/testComponents/testComponent";
+
 
 export default {
   name: "Login",
@@ -59,7 +62,12 @@ export default {
       verificationMessage: "",
     };
   },
+  components: {
+    testComponent,
+    
+  },
   mounted() {
+  
     window.scrollTo(0, 0);
     console.log(this.$route.query.redirect);
     // console.log(this.$store.state.currentUser.user);

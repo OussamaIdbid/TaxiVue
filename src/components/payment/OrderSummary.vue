@@ -1,8 +1,77 @@
 <template>
-  <section class="section is-family-primary" id="section-results">
-    <div v-if="!isLoading" class="container">
-      <div class="columns is-centered" id="column-container">
-        <div class="column is-half is-centered">
+  <div>
+    <!--<section class="section is-family-primary" id="section-results">-->
+    <div v-if="!isLoading" style="position: relative">
+      <!--column structure for mobile. flex direction should be column
+      pay attention to padding for connection order info and map-->
+      <!--<div class="columns">-->
+      <!--first column for map-->
+      <!--<div class="column">-->
+
+      <!--</div>-->
+      <!--second column for order info-->
+      <!--<div class="column">-->
+
+      <!--</div>-->
+      <!--</div>-->
+      <!--<div class="columns is-centered" id="order-info">-->
+      <div class="column is-2" id="order-route">
+        <div class="card" id="order-route-card">
+          <div class="card-content">
+            <div class="content">
+              <div class="columns">
+                <div class="column is-1">
+                  <div class="columns" style="flex-direction: column">
+                    <div class="column">
+                      <span class="material-icons"> fiber_manual_record </span>
+                    </div>
+                    <div class="column"></div>
+                    <div class="column">
+                      <span class="material-icons"> fiber_manual_record </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="column">
+                  <div class="columns" style="flex-direction: column">
+                    <div class="column">
+                      <p class="label">Vertrekpunt</p>
+                      <p class="info">{{ startAddressS }}</p>
+                    </div>
+                    <div class="column">
+                      <p class="label">Eindbestemming</p>
+                      <p class="info">{{ endAddressS }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--</div>-->
+
+      <HereMap
+        :center="center"
+        :startLocation="this.startAddressGeo"
+        :endLocation="this.endAddressGeo"
+        :startAddress="this.startAddressS"
+        :endAddress="this.endAddressS"
+      />
+      <div class="column is-3">
+        <div class="card">
+          <div class="card-content">
+            <div class="content">
+              Lorem ipsum leo risus, porta ac consectetur ac, vestibulum at
+              eros. Donec id elit non mi porta gravida at eget metus. Cum sociis
+              natoque penatibus et magnis dis parturient montes, nascetur
+              ridiculus mus. Cras mattis consectetur purus sit amet fermentum.
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--<div class="columns is-centered" id="column-container">-->
+      <!--<div class="column is-half is-centered">
           <img id="map-img" :src="map_urlS" />
         </div>
         <div class="column is-one-third is-centered">
@@ -51,28 +120,40 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </div>-->
+      <!--</div>-->
     </div>
     <b-loading
       :is-full-page="true"
       v-model="isLoading"
       :can-cancel="true"
     ></b-loading>
-  </section>
+  </div>
+  <!--</section>-->
 </template>
 
 <script>
 import Reservation from "../../Api/Reservation";
+import HereMap from "../../components/HereAPI/HereMap";
+
 export default {
   props: {
     OrderID: Number,
   },
+  components: {
+    HereMap,
+  },
   data() {
     return {
+      center: {
+        lat: 52.516,
+        lng: 13.3779,
+      },
       map_urlS: "",
       startAddressS: "",
       endAddressS: "",
+      startAddressGeo: "",
+      endAddressGeo: "",
       distanceS: 0,
       traveltimeS: 0,
       ReservationDate: "",
@@ -95,6 +176,8 @@ export default {
       ).toLocaleDateString("en-GB");
       this.farePriceS = response.data.fare_price;
       this.paymentID = response.data.payment_id;
+      this.startAddressGeo = response.data.start_address_geo;
+      this.endAddressGeo = response.data.end_address_geo;
 
       Reservation.getWebhook({ id: response.data.payment_id }).then(
         (response) => {
@@ -107,18 +190,29 @@ export default {
   },
   methods: {
     refundPayment() {
-      Reservation.RefundPayment(this.paymentID,this.farePriceS)
-      .then( (response) => {
-        console.log(response);
-      });
-    }
-  }
+      Reservation.RefundPayment(this.paymentID, this.farePriceS).then(
+        (response) => {
+          console.log(response);
+        }
+      );
+    },
+  },
 };
 </script>
 
 <style scoped>
 #column-container {
   flex-direction: row;
+}
+#order-info {
+  position: absolute;
+  flex-direction: column;
+  align-items: flex-end;
+  pointer-events: none;
+  z-index: 3;
+}
+.column {
+  pointer-events: all;
 }
 #results-tile {
   display: flex;
@@ -128,10 +222,13 @@ export default {
 }
 #km-text,
 #min-text,
-.text {
+.text,
+.label {
   font-size: small;
   margin-bottom: 0;
   align-self: center;
+  margin: 0;
+  color: grey;
 }
 #start-address,
 #end-address {
@@ -147,10 +244,12 @@ export default {
 #min-amount,
 #km-amount,
 #fare-amount,
-.amount {
+.amount,
+.info {
   width: 100%;
-  text-align: end;
+  /*text-align: end;*/
   font-weight: bold;
+  font-size: small;
 }
 #details-wrapper > div {
   display: flex;
@@ -170,11 +269,20 @@ export default {
 .rounded-container {
   border-radius: 20px;
 }
-.footer {
+.material-icons {
+  color: #f14668 !important;
 }
-
-#map {
+#order-route {
+  position: absolute;
+  z-index: 3;
+}
+#order-route-card {
+  margin-top: 1rem;
+  margin-left: 1rem;
+  border-radius: 1rem;
+}
+/**#map {
   width: 500px;
   height: 500px;
-}
+}*/
 </style>

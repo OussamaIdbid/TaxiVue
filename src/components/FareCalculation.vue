@@ -123,6 +123,8 @@ export default {
           travelTime: 0,
           farePrice: 0,
           amountOfPeople: "",
+          startAddressGeo: "",
+          endAddressGeo: "",
         },
       ],
       search: null,
@@ -162,6 +164,20 @@ export default {
           "endAddress",
           this.CryptoJS.AES.encrypt(
             this.returnResult[0].endAddress,
+            DecryptKey
+          ).toString()
+        );
+                sessionStorage.setItem(
+          "startAddressGeo",
+          this.CryptoJS.AES.encrypt(
+            this.returnResult[0].startAddressGeo,
+            DecryptKey
+          ).toString()
+        );
+                sessionStorage.setItem(
+          "endAddressGeo",
+          this.CryptoJS.AES.encrypt(
+            this.returnResult[0].endAddressGeo,
             DecryptKey
           ).toString()
         );
@@ -402,6 +418,8 @@ export default {
         );
         this.returnResult[0].farePrice = this.fare;
         this.returnResult[0].amountOfPeople = this.categorySelect.text;
+        this.returnResult[0].startAddressGeo = this.startAddressGeo;
+        this.returnResult[0].endAddressGeo = this.endAddressGeo;
         // console.log(this.mapurl);
         this.passData();
       });
