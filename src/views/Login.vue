@@ -1,12 +1,9 @@
 <template>
-  <section class="section is-large">
+  <section class="section is-medium">
     <div class="container">
       <div class="columns is-centered">
         <div class="column is-one-third">
           <div class="card">
-            <header class="card-header">
-              <p class="card-header-title">Log in</p>
-            </header>
             <div class="card-content">
               <b-field label="Email" :message="errors.email">
                 <b-input type="email" v-model="form.email"></b-input>
@@ -21,11 +18,13 @@
               <router-link class="is-size-7" :to="{ path: '/forgot-password' }"
                 >Wachtwoord vergeten?</router-link
               >
-              <b-button @click.prevent="login" :expanded="true" type="is-danger"
-                >Log in</b-button
-              >
             </div>
           </div>
+        </div>
+        <div class="column is-one-third">
+          <b-button @click.prevent="login" :expanded="true" type="is-danger"
+            >Log in</b-button
+          >
         </div>
 
         <div class="column is-one-third">
@@ -38,7 +37,6 @@
             >Maak een account aan</b-button
           >
         </div>
-        <test-component></test-component>
       </div>
     </div>
   </section>
@@ -46,8 +44,7 @@
 
 <script>
 import User from "../Api/User";
-import testComponent from "../components/testComponents/testComponent";
-
+//import testComponent from "../components/testComponents/testComponent";
 
 export default {
   name: "Login",
@@ -63,11 +60,9 @@ export default {
     };
   },
   components: {
-    testComponent,
-    
+    //testComponent,
   },
   mounted() {
-  
     window.scrollTo(0, 0);
     console.log(this.$route.query.redirect);
     // console.log(this.$store.state.currentUser.user);
@@ -90,7 +85,7 @@ export default {
               message: "Ingelogd",
               type: "is-success",
             });
-            if (this.$route.query.redirect == 'FareCalculationResult') {
+            if (this.$route.query.redirect == "FareCalculationResult") {
               this.$router.push({ name: "FareCalculationResult" });
             } else {
               this.$router.push({ name: "Dashboard" });
