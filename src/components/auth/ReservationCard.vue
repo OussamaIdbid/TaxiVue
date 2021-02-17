@@ -1,11 +1,12 @@
 <template>
   <div class="column is-one-third is-centered">
+    <p>{{ date }}</p>
     <div class="card" id="order-route-card">
       <div class="card-content">
         <div class="content">
           <div class="columns">
             <div class="column is-1">
-              <div class="columns" style="flex-direction: column">
+             <!-- div class="columns" style="flex-direction: column">
                 <div class="column">
                   <span class="material-icons"> fiber_manual_record </span>
                 </div>
@@ -15,7 +16,7 @@
                 <div class="column">
                   <span class="material-icons"> location_on </span>
                 </div>
-              </div>
+              </div>-->
             </div>
             <div class="column">
               <div class="columns" style="flex-direction: column">
@@ -67,6 +68,7 @@ export default {
       reservationData: null,
       startAddress: "",
       endAddress: "",
+      date: "",
       isComponentModalActive: false,
     };
   },
@@ -76,6 +78,9 @@ export default {
       this.reservationData = response.data;
       this.startAddress = response.data.start_address;
       this.endAddress = response.data.end_address;
+      this.date = new Date(
+        response.data.pickup_date
+      ).toLocaleDateString("en-GB");
       console.log(this.reservationData);
     });
   },

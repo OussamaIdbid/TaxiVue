@@ -14,13 +14,14 @@ import VueCookies from 'vue-cookies'
 import VueCryptojs from 'vue-cryptojs'
 import MaterialIcons from 'material-design-icons'
 import InfiniteLoading from 'vue-infinite-loading';
-
+import VueMoment from 'vue-moment';
 Vue.use(InfiniteLoading, { /* options */ });
 Vue.use(VueCryptojs)
 Vue.use(VueCookies)
 Vue.use(Buefy)
 Vue.use(VueResource)
 Vue.use(MaterialIcons)
+Vue.use(VueMoment);
 Vue.config.productionTip = false
 
 new Vue({
