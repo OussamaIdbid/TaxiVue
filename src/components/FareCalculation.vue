@@ -455,7 +455,8 @@ export default {
         padding: 0 !important;
     }
     #card-container > .column {
-      padding:0;
+      padding-right:0;
+      padding-left:0;
     }
 }
 </style>
