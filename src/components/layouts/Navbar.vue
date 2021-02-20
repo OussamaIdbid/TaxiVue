@@ -17,9 +17,13 @@
                   <b-navbar-item v-if="isLoggedIn" tag="router-link" :to="{ path: '/dashboard' }" >
                     Account details
                   </b-navbar-item>
+                  <b-navbar-item v-if="isLoggedIn" tag="router-link" :to="{ path: '/reservations' }" >
+                    Reserveringen
+                  </b-navbar-item>
                   <b-navbar-item v-if="isLoggedIn" @click.prevent="logout">
                     Uitloggen
                   </b-navbar-item>
+                 
                 </b-navbar-dropdown>
 
 

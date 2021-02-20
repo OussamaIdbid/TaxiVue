@@ -36,6 +36,7 @@ export default {
       if (response.data.user_type == 2) {
         Reservations.getAllReservations().then((response) => {
           this.data = response.data;
+          this.isLoading = false;
         });
       } else {
         Reservations.getReservations().then((response) => {

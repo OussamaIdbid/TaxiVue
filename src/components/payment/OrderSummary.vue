@@ -65,7 +65,8 @@
               Lorem ipsum leo risus, porta ac consectetur ac, vestibulum at
               eros. Donec id elit non mi porta gravida at eget metus. Cum sociis
               natoque penatibus et magnis dis parturient montes, nascetur
-              ridiculus mus. Cras mattis consectetur purus sit amet fermentum.
+              \ridiculus mus. Cras mattis consectetur purus sit amet fermentum.
+              <button @click="updateTest()">update test</button>
             </div>
           </div>
         </div>
@@ -135,6 +136,7 @@
 <script>
 import Reservation from "../../Api/Reservation";
 import HereMap from "../../components/HereAPI/HereMap";
+import moment from 'moment';
 
 export default {
   props: {
@@ -161,19 +163,19 @@ export default {
       paymentID: "",
       paymentMethod: "",
       isLoading: true,
+      data: null
     };
   },
   mounted() {
     Reservation.getReservation(this.OrderID).then((response) => {
       console.log(response.data);
+      this.data = response.data;
       this.map_urlS = response.data.map_url;
       this.startAddressS = response.data.start_address;
       this.endAddressS = response.data.end_address;
       this.distanceS = response.data.distance;
       this.traveltimeS = response.data.travel_time;
-      this.ReservationDate = new Date(
-        response.data.pickup_date
-      ).toLocaleDateString("en-GB");
+      this.ReservationDate = moment(response.data.pickup_date).format('D MMMM YYYY'); 
       this.farePriceS = response.data.fare_price;
       this.paymentID = response.data.payment_id;
       this.startAddressGeo = response.data.start_address_geo;
@@ -187,6 +189,7 @@ export default {
         }
       );
     });
+    
   },
   methods: {
     refundPayment() {
@@ -196,6 +199,14 @@ export default {
         }
       );
     },
+    updateTest() {
+
+      this.data.refundIsAsked = 1;
+      Reservation.updateReservation(this.OrderID, this.data)
+      .then(response => {
+        console.log(response);
+      })
+    }
   },
 };
 </script>

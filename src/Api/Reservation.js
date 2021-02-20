@@ -9,6 +9,11 @@ export default {
         
         return Api.post("/reservations", form);
     },
+    async updateReservation(id,form) {
+        await Csrf.getCookie();
+
+        return Api.post('/reservations/update/' + id, form);
+    },
     async getReservations() {
         await Csrf.getCookie();
         

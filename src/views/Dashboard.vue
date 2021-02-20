@@ -8,7 +8,7 @@
             </div>
             <EditUser />
             <EditPassword />
-            <ReservationsTable />
+            <!--<ReservationsTable />-->
         </section>
 
     </div>
@@ -18,7 +18,7 @@
     import User from '../Api/User'
     import EditUser from '../components/auth/EditUser.vue'
     import EditPassword from '../components/auth/EditPassword'
-    import ReservationsTable from '../components/auth/ReservationsTable.vue'
+    //import ReservationsTable from '../components/auth/ReservationsTable.vue'
     export default {
         name: 'Dashboard',
         data() {
@@ -29,7 +29,7 @@
         components: {
             EditUser,
             EditPassword,
-            ReservationsTable
+            //ReservationsTable
         },
         mounted() {
             User.auth().then(response => {
