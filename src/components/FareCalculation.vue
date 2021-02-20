@@ -448,4 +448,14 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+/*Mobile breakpoints*/
+@media only screen and (max-width: 768px) {
+    .section,.container {
+        padding: 0 !important;
+    }
+    #card-container > .column {
+      padding:0;
+    }
+}
+</style>

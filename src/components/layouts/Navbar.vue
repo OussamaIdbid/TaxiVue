@@ -3,10 +3,7 @@
         <b-navbar fixed-top>
             <template slot="brand">
                 <b-navbar-item tag="router-link" :to="{ path: '/' }">
-                            <b-icon type="is-danger"
-                    icon="taxi" size="is-medium">
-                    
-                </b-icon>
+                         <img src="../../assets/img/TaxiLagelandenLogo.png" alt="">
                 </b-navbar-item>
             </template>
              <template slot="start">

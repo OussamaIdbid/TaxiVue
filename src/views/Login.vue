@@ -121,4 +121,12 @@ export default {
 .card-header-title {
   justify-content: center;
 }
+@media only screen and (max-width: 768px) {
+    .container {
+        padding: 0 !important;
+    }
+    .container > .columns > .column:first-of-type {
+      padding:0;
+    }
+}
 </style>
