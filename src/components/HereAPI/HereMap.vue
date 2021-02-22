@@ -41,7 +41,7 @@ export default {
       const mapContainer = this.$refs.hereMap;
       const H = window.H;
       // Obtain the default map types from the platform object
-      var maptypes = this.platform.createDefaultLayers();
+      let maptypes = this.platform.createDefaultLayers();
 
       // Instantiate (and display) a map object:
       this.map = new H.Map(mapContainer, maptypes.vector.normal.map, {
@@ -64,7 +64,7 @@ export default {
       // End rendering the initial map
     },
     calculateRouteFromAtoB(platform) {
-      var router = platform.getRoutingService(null, 8),
+      let router = platform.getRoutingService(null, 8),
         routeRequestParams = {
           routingMode: "fast",
           transportMode: "car",
@@ -113,7 +113,7 @@ export default {
      * @param {Object} route  A route as received from the H.service.RoutingService
      */
     addManueversToMap(route) {
-      var svgMarkup =
+      let svgMarkup =
           '<svg width="18" height="18" ' +
           'xmlns="http://www.w3.org/2000/svg">' +
           '<circle cx="8" cy="8" r="8" ' +

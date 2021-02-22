@@ -359,8 +359,8 @@ export default {
     FareCalculateValidation() {
       // console.log(this.StartInput);
       // console.log(this.EndInput);
-      var startIsValid = this.validateAddress(this.StartInput);
-      var endIsValid = this.validateAddress(this.EndInput);
+      let startIsValid = this.validateAddress(this.StartInput);
+      let endIsValid = this.validateAddress(this.EndInput);
       //var categorySelect = $("#person-category").val();
       if (this.categorySelect.text != null && startIsValid && endIsValid) {
         if (this.StartInput != this.EndInput) {
@@ -379,10 +379,10 @@ export default {
      * @param {string} address
      */
     validateAddress(address) {
-      var amountOfCommas = 0;
+      let amountOfCommas = 0;
       //console.log(address.length);
 
-      for (var i = 0; i < address.length; i++) {
+      for (let i = 0; i < address.length; i++) {
         if (String(address).charAt(i) == ",") {
           amountOfCommas++;
         }
@@ -425,8 +425,8 @@ export default {
       });
     },
     time_convert(num) {
-      var hours = Math.floor(num / 60);
-      var minutes = num % 60;
+      let hours = Math.floor(num / 60);
+      let minutes = num % 60;
       // console.log(hours);
       // console.log(minutes);
 

@@ -57,7 +57,7 @@
             User.auth().then(response => {
                 console.log(response.data)
                 this.user = response.data;
-                var name = this.user.name.split(" ");
+                let name = this.user.name.split(" ");
 
                 this.firstName = name[0];
                 this.lastName = name[1]
@@ -99,7 +99,7 @@
             cancel() {
                 User.auth().then(response => {
                     this.user = response.data;
-                    var name = this.user.name.split(" ");
+                    let name = this.user.name.split(" ");
 
                     this.firstName = name[0];
                     this.lastName = name[1]
