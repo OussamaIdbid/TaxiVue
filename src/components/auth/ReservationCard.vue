@@ -59,6 +59,8 @@
 <script>
 import Reservation from "../../Api/Reservation.js";
 import ReservationsInfo from "../payment/OrderSummary";
+import moment from 'moment';
+
 export default {
   props: {
     OrderID: Number,
@@ -74,14 +76,12 @@ export default {
   },
   mounted() {
     Reservation.getReservation(this.OrderID).then((response) => {
-      console.log("hello");
+
       this.reservationData = response.data;
       this.startAddress = response.data.start_address;
       this.endAddress = response.data.end_address;
-      this.date = new Date(
-        response.data.pickup_date
-      ).toLocaleDateString("en-GB");
-      console.log(this.reservationData);
+      this.date = moment(response.data.pickup_date).format('D MMMM YYYY');
+      
     });
   },
   components: {
@@ -91,8 +91,10 @@ export default {
 </script>
 
 <style scoped>
+
 .card {
-  border-radius: 1rem;
+  border-radius: none;
+  box-shadow: none;
 }
 .material-icons {
   color: #f14668 !important;
@@ -112,5 +114,17 @@ export default {
 .vertical_dotted_line {
   border-left: 1px dotted black;
   height: 100px;
+}
+
+/*Mobile breakpoints*/
+@media only screen and (max-width: 768px) {
+    .tab-content {
+      padding:0;
+     
+    }
+    .column {
+      width: 100%;
+    }
+
 }
 </style>
