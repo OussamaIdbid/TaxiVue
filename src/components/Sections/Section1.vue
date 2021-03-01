@@ -1,6 +1,6 @@
 <template>
   <section class="section is-family-primary is-large mb-6" id="section_1">
-    <FareCalculation  @clicked="onClickChild" />
+    <FareCalculation />
     <div class="columns is-centered">
       <div class="column is-one-third is-centered" id="reserve-column">
         <button
@@ -25,12 +25,8 @@ export default {
     FareCalculation,
   },
   methods: {
-    onClickChild (value) {
-      //this.returnedData = value
-      //console.log(value)
-      this.$emit('clicked', value)
-    }
-  }
+
+  },
 };
 </script>
 <style lang="stylus" scoped></style>

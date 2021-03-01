@@ -17,7 +17,7 @@
 import User from "../Api/User";
 import EditUser from "../components/auth/EditUser.vue";
 import EditPassword from "../components/auth/EditPassword";
-//import ReservationsTable from '../components/auth/ReservationsTable.vue'
+
 export default {
   name: "Dashboard",
   data() {
@@ -28,7 +28,6 @@ export default {
   components: {
     EditUser,
     EditPassword,
-    //ReservationsTable
   },
   mounted() {
     User.auth().then((response) => {
@@ -52,8 +51,9 @@ h3 {
 }
 /*Mobile breakpoints*/
 @media only screen and (max-width: 768px) {
-    .section,.container {
-        padding: 0 !important;
-    }
+  .section,
+  .container {
+    padding: 0 !important;
+  }
 }
 </style>
