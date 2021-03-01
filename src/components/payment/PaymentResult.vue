@@ -69,7 +69,7 @@
 <script>
 import Reservation from "../../Api/Reservation";
 import User from "../../Api/User";
-import { DecryptKey } from "../../variables.js";
+import { DecryptKey } from "../../variables/keys";
 
 export default {
   name: "PaymentResult",
@@ -120,8 +120,10 @@ export default {
             } else if (response.data.status == "canceled") {
               this.$router.push({ name: "FareCalculationResult" });
             } else if (response.data.status == "expired") {
+              //create error page that says payment has expired and payment didnt go through
               console.log("payment expired");
             } else if (response.data.status == "failed") {
+              //create error page that says payment has failed and redirect to fare result page
               console.log("payment failed");
             }
           });
@@ -150,7 +152,7 @@ export default {
           sessionStorage.getItem("endAddressGeo"),
           DecryptKey
         ).toString(this.CryptoJS.enc.Utf8),
-        
+
         amount_of_people: sessionStorage.getItem("amountOfPeople"),
         pickup_date: sessionStorage.getItem("pickup_date"),
         fare_price: this.CryptoJS.AES.decrypt(

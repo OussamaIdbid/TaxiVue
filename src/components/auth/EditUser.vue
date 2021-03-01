@@ -85,7 +85,6 @@
                                 message: 'Je profiel is bijgewerkt',
                                 type: 'is-success'
                             })
-                            console.log("hello")
 
                     })
                     .catch((error) => {

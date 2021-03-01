@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!--<section class="section is-family-primary" id="section-results">-->
+    <section class="section is-family-primary" id="section-results">
     <div v-if="!isLoading" style="position: relative">
       <!--column structure for mobile. flex direction should be column
       pay attention to padding for connection order info and map-->
@@ -15,7 +15,7 @@
       <!--</div>-->
       <!--</div>-->
       <!--<div class="columns is-centered" id="order-info">-->
-      <div class="column is-2" id="order-route">
+      <!--<div class="column is-2" id="order-route">
         <div class="card" id="order-route-card">
           <div class="card-content">
             <div class="content">
@@ -49,7 +49,7 @@
         </div>
       </div>
 
-      <!--</div>-->
+      </div>
 
       <HereMap
         :center="center"
@@ -70,10 +70,17 @@
             </div>
           </div>
         </div>
-      </div>
-      <!--<div class="columns is-centered" id="column-container">-->
-      <!--<div class="column is-half is-centered">
-          <img id="map-img" :src="map_urlS" />
+      </div>-->
+      <div class="columns is-centered" id="column-container">
+      <div class="column is-half is-centered">
+              <HereMap
+        :center="center"
+        :startLocation="this.startAddressGeo"
+        :endLocation="this.endAddressGeo"
+        :startAddress="this.startAddressS"
+        :endAddress="this.endAddressS"
+      />
+          <!--<img id="map-img" :src="map_urlS" />-->
         </div>
         <div class="column is-one-third is-centered">
           <div
@@ -121,16 +128,17 @@
               </div>
             </div>
           </div>
-        </div>-->
-      <!--</div>-->
+        </div>
+      </div>
     </div>
     <b-loading
       :is-full-page="true"
       v-model="isLoading"
       :can-cancel="true"
     ></b-loading>
+  
+  </section>
   </div>
-  <!--</section>-->
 </template>
 
 <script>

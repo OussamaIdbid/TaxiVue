@@ -1,24 +1,24 @@
 <template>
-  <div class="column is-one-third is-centered">
+  <div class="column is-one-third is-centered" id="card-column">
     <p>{{ date }}</p>
     <div class="card" id="order-route-card">
       <div class="card-content">
         <div class="content">
           <div class="columns">
             <div class="column is-1">
-             <!-- div class="columns" style="flex-direction: column">
-                <div class="column">
+               <div class="columns" style="flex-direction: column">
+                <div class="column is-1">
                   <span class="material-icons"> fiber_manual_record </span>
                 </div>
-                <div class="column">
-                  <div class="vertical_dotted_line"></div>
+                <div class="column is-1">
+                  
                 </div>
-                <div class="column">
+                <div class="column is-1">
                   <span class="material-icons"> location_on </span>
                 </div>
-              </div>-->
+              </div>
             </div>
-            <div class="column">
+            <div class="column is-8">
               <div class="columns" style="flex-direction: column">
                 <div class="column">
                   <p class="label">Vertrekpunt</p>
@@ -28,18 +28,15 @@
                   <p class="label">Eindbestemming</p>
                   <p class="info">{{ endAddress }}</p>
                 </div>
-                <span
-                  type="button"
-                  class="tag is-success"
-                  @click="isComponentModalActive = true"
-                >
-                  Bekijk
-                </span>
+
               </div>
             </div>
           </div>
         </div>
       </div>
+      <footer class="card-footer">
+        <a @click="isComponentModalActive = true" class="card-footer-item">Bekijk</a>
+      </footer>
     </div>
     <b-modal
       v-model="isComponentModalActive"
@@ -59,7 +56,7 @@
 <script>
 import Reservation from "../../Api/Reservation.js";
 import ReservationsInfo from "../payment/OrderSummary";
-import moment from 'moment';
+import moment from "moment";
 
 export default {
   props: {
@@ -76,12 +73,10 @@ export default {
   },
   mounted() {
     Reservation.getReservation(this.OrderID).then((response) => {
-
       this.reservationData = response.data;
       this.startAddress = response.data.start_address;
       this.endAddress = response.data.end_address;
-      this.date = moment(response.data.pickup_date).format('D MMMM YYYY');
-      
+      this.date = moment(response.data.pickup_date).format("D MMMM YYYY");
     });
   },
   components: {
@@ -91,7 +86,6 @@ export default {
 </script>
 
 <style scoped>
-
 .card {
   border-radius: none;
   box-shadow: none;
@@ -118,13 +112,11 @@ export default {
 
 /*Mobile breakpoints*/
 @media only screen and (max-width: 768px) {
-    .tab-content {
-      padding:0;
-     
-    }
-    .column {
-      width: 100%;
-    }
-
+  .tab-content {
+    padding: 0;
+  }
+  #card-column {
+    width: 100%;
+  }
 }
 </style>

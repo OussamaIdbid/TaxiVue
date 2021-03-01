@@ -55,11 +55,13 @@
                 v-on:input="FareCalculateValidation()"
               >
                 <option
+                  aria-placeholder="Aantal personen"
                   v-for="category in categories"
                   v-bind:value="{ id: category.id, text: category.name }"
                   v-bind:key="category.id"
-                  >{{ category.name }}</option
                 >
+                  {{ category.name }}
+                </option>
               </b-select>
             </b-field>
 
@@ -79,21 +81,15 @@
 <script>
 import axios from "axios";
 import $ from "jquery";
-import "jquery-ui/ui/widgets/autocomplete";
+//import "jquery-ui/ui/widgets/autocomplete";
 import debounce from "lodash/debounce";
-import Reservation from "../Api/Reservation";
-import { DecryptKey } from "../variables.js";
+import { DecryptKey, HereApiKey } from "../variables/keys";
+import { CALCULATION_CONSTANTS } from "../variables/fareCalculations";
 
 export default {
   name: "FareCalculation",
   data() {
     return {
-      ONE_TO_FOUR_BASE: 3.26,
-      FOUR_TO_SEVEN_BASE: 6.63,
-      PER_KM_ONE_TO_FOUR: 2.4,
-      PER_KM_FOUR_TO_SEVEN: 3.02,
-      PER_MIN_ONE_TO_FOUR: 0.4,
-      PER_MIN_FOUR_TO_SEVEN: 0.45,
       platform: {},
       StartInput: "",
       EndInput: "",
@@ -136,7 +132,7 @@ export default {
   },
   created() {
     this.platform = new H.service.Platform({
-      apiKey: this.APIKEY,
+      apiKey: HereApiKey,
     });
     this.service = this.platform.getSearchService();
     this.router = this.platform.getRoutingService();
@@ -148,55 +144,57 @@ export default {
     passData() {
       $(".pageloader").addClass("is-active");
       setTimeout(() => {
-        // console.log(response);
-        this.$router.push({
-          name: "FareCalculationResult",
-        });
-        sessionStorage.setItem("map_url", this.returnResult[0].map_url);
-        sessionStorage.setItem(
-          "startAddress",
-          this.CryptoJS.AES.encrypt(
-            this.returnResult[0].startAddress,
-            DecryptKey
-          ).toString()
-        );
-        sessionStorage.setItem(
-          "endAddress",
-          this.CryptoJS.AES.encrypt(
-            this.returnResult[0].endAddress,
-            DecryptKey
-          ).toString()
-        );
-                sessionStorage.setItem(
-          "startAddressGeo",
-          this.CryptoJS.AES.encrypt(
-            this.returnResult[0].startAddressGeo,
-            DecryptKey
-          ).toString()
-        );
-                sessionStorage.setItem(
-          "endAddressGeo",
-          this.CryptoJS.AES.encrypt(
-            this.returnResult[0].endAddressGeo,
-            DecryptKey
-          ).toString()
-        );
-        sessionStorage.setItem("distance", this.returnResult[0].distance);
-        sessionStorage.setItem("traveltime", this.returnResult[0].travelTime);
-        sessionStorage.setItem(
-          "farePrice",
-          this.CryptoJS.AES.encrypt(
-            this.returnResult[0].farePrice,
-            DecryptKey
-          ).toString()
-        );
-        sessionStorage.setItem(
-          "amountOfPeople",
-          this.returnResult[0].amountOfPeople
-        );
+      // console.log(response);
 
-        sessionStorage.setItem("calculated", true);
-      }, 1000);
+      sessionStorage.setItem("map_url", this.returnResult[0].map_url);
+      sessionStorage.setItem(
+        "startAddress",
+        this.CryptoJS.AES.encrypt(
+          this.returnResult[0].startAddress,
+          DecryptKey
+        ).toString()
+      );
+      sessionStorage.setItem(
+        "endAddress",
+        this.CryptoJS.AES.encrypt(
+          this.returnResult[0].endAddress,
+          DecryptKey
+        ).toString()
+      );
+      sessionStorage.setItem(
+        "startAddressGeo",
+        this.CryptoJS.AES.encrypt(
+          this.returnResult[0].startAddressGeo,
+          DecryptKey
+        ).toString()
+      );
+      sessionStorage.setItem(
+        "endAddressGeo",
+        this.CryptoJS.AES.encrypt(
+          this.returnResult[0].endAddressGeo,
+          DecryptKey
+        ).toString()
+      );
+      sessionStorage.setItem("distance", this.returnResult[0].distance);
+      sessionStorage.setItem("traveltime", this.returnResult[0].travelTime);
+      sessionStorage.setItem(
+        "farePrice",
+        this.CryptoJS.AES.encrypt(
+          this.returnResult[0].farePrice,
+          DecryptKey
+        ).toString()
+      );
+      sessionStorage.setItem(
+        "amountOfPeople",
+        this.returnResult[0].amountOfPeople
+      );
+
+      sessionStorage.setItem("calculated", true);
+
+      this.$router.push({
+        name: "FareCalculationResult",
+      });
+      }, 500);
     },
     /**
      * calculate distance between coordinates
@@ -340,15 +338,15 @@ export default {
     CalculateTaxiFare(km, min, personCategory) {
       if (personCategory == 1) {
         this.fare = (
-          this.ONE_TO_FOUR_BASE +
-          this.PER_KM_ONE_TO_FOUR * km +
-          this.PER_MIN_ONE_TO_FOUR * min
+          CALCULATION_CONSTANTS.ONE_TO_FOUR_BASE +
+          CALCULATION_CONSTANTS.PER_KM_ONE_TO_FOUR * km +
+          CALCULATION_CONSTANTS.PER_MIN_ONE_TO_FOUR * min
         ).toFixed(2);
       } else {
         this.fare = (
-          this.FOUR_TO_SEVEN_BASE +
-          this.PER_KM_FOUR_TO_SEVEN * km +
-          this.PER_MIN_FOUR_TO_SEVEN * min
+          CALCULATION_CONSTANTS.FOUR_TO_SEVEN_BASE +
+          CALCULATION_CONSTANTS.PER_KM_FOUR_TO_SEVEN * km +
+          CALCULATION_CONSTANTS.PER_MIN_FOUR_TO_SEVEN * min
         ).toFixed(2);
       }
       this.getMapRouteImg(this.startAddressGeo, this.endAddressGeo);
@@ -436,14 +434,6 @@ export default {
         return hours + " uur en " + Math.round(minutes) + " min";
       }
     },
-    showInput(string) {
-      alert(string);
-    },
-    test() {
-      Reservation.getReservations().then((response) => {
-        console.log(response);
-      });
-    },
   },
 };
 </script>
@@ -451,12 +441,13 @@ export default {
 <style scoped>
 /*Mobile breakpoints*/
 @media only screen and (max-width: 768px) {
-    .section,.container {
-        padding: 0 !important;
-    }
-    #card-container > .column {
-      padding-right:0;
-      padding-left:0;
-    }
+  .section,
+  .container {
+    padding: 0 !important;
+  }
+  #card-container > .column {
+    padding-right: 0;
+    padding-left: 0;
+  }
 }
 </style>

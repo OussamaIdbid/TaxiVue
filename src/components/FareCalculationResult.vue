@@ -60,7 +60,7 @@
 <script>
 import $ from "jquery";
 import ReservationForm from "./ReservationForm";
-import { DecryptKey } from "../variables.js";
+import { DecryptKey } from "../variables/keys";
 
 export default {
   components: {

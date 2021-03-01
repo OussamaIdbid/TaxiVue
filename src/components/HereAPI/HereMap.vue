@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { HereApiKey } from "../../variables.js";
+import { HereApiKey } from "../../variables/keys";
 
 export default {
   name: "HereMap",
