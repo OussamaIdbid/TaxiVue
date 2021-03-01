@@ -43,8 +43,7 @@
 </template>
 
 <script>
-import User from "../Api/User";
-//import testComponent from "../components/testComponents/testComponent";
+import { mapActions } from "vuex";
 
 export default {
   name: "Login",
@@ -59,44 +58,46 @@ export default {
       verificationMessage: "",
     };
   },
-  components: {
-    //testComponent,
-  },
   mounted() {
     window.scrollTo(0, 0);
     console.log(this.$route.query.redirect);
-    // console.log(this.$store.state.currentUser.user);
   },
   methods: {
+    ...mapActions(["signIn"]),
     login() {
-      User.login(this.form)
+      this.signIn(this.form)
         .then((response) => {
-          if (response.data.verified == "false") {
-            console.log(response.data.message);
-            this.verificationMessage = response.data.message;
-            this.$buefy.toast.open({
-              message: this.verificationMessage,
-              type: "is-info",
-            });
-          } else {
-            this.$root.$emit("login", true);
-            localStorage.setItem("auth", "true");
-            this.$buefy.toast.open({
-              message: "Ingelogd",
-              type: "is-success",
-            });
-            if (this.$route.query.redirect == "FareCalculationResult") {
-              this.$router.push({ name: "FareCalculationResult" });
+          if (response.isFulfilled == true) {
+            if (response.response.verified == "false") {
+              // console.log(response.data.message);
+              this.verificationMessage = response.response.message;
+              this.$buefy.toast.open({
+                message: this.verificationMessage,
+                type: "is-info",
+              });
             } else {
-              this.$router.push({ name: "Dashboard" });
+              this.$buefy.toast.open({
+                message: "Ingelogd",
+                type: "is-success",
+              });
+              if (this.$route.query.redirect == "FareCalculationResult") {
+                this.$router.push({ name: "FareCalculationResult" });
+              } else {
+                this.$router.push({ name: "Dashboard" });
+              }
             }
           }
         })
         .catch((error) => {
-          if (error.response.status === 422) {
-            console.log(error.response.data.errors);
-            this.errors = error.response.data.errors;
+          if (error.isFulfilled == false) {
+            console.log(error);
+            if (error.error.response.status === 422) {
+              console.log(error.error.response.data.errors);
+              this.errors = error.error.response.data.errors;
+            }
           }
+
+          console.log(error);
         });
     },
   },
@@ -122,11 +123,11 @@ export default {
   justify-content: center;
 }
 @media only screen and (max-width: 768px) {
-    .container {
-        padding: 0 !important;
-    }
-    .container > .columns > .column:first-of-type {
-      padding:0;
-    }
+  .container {
+    padding: 0 !important;
+  }
+  .container > .columns > .column:first-of-type {
+    padding: 0;
+  }
 }
 </style>

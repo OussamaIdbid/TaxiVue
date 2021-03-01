@@ -7,17 +7,17 @@
                 </b-navbar-item>
             </template>
              <template slot="start">
-                <b-navbar-item v-if="!isLoggedIn" tag="router-link" :to="{ path: '/login' }" >
+                <b-navbar-item v-if="!authenticated" tag="router-link" :to="{ path: '/login' }" >
                     Login
                 </b-navbar-item>
-                <b-navbar-dropdown label="Mijn account" v-if="isLoggedIn">  
-                  <b-navbar-item v-if="isLoggedIn" tag="router-link" :to="{ path: '/dashboard' }" >
+                <b-navbar-dropdown label="Mijn account" v-if="authenticated">  
+                  <b-navbar-item v-if="authenticated" tag="router-link" :to="{ path: '/dashboard' }" >
                     Account details
                   </b-navbar-item>
-                  <b-navbar-item v-if="isLoggedIn" tag="router-link" :to="{ path: '/reservations' }" >
+                  <b-navbar-item v-if="authenticated" tag="router-link" :to="{ path: '/reservations' }" >
                     Reserveringen
                   </b-navbar-item>
-                  <b-navbar-item v-if="isLoggedIn" @click.prevent="logout">
+                  <b-navbar-item v-if="authenticated" @click.prevent="logout">
                     Uitloggen
                   </b-navbar-item>
                  
@@ -47,8 +47,9 @@
 </template>
 
 <script>
-import User from "../../Api/User"
-//import Csrf from "../../Api/Csrf"
+//import User from "../../Api/User"
+import {mapGetters, mapActions} from 'vuex'
+//import Csrf from "../../Api/ Csrf"
 export default {
     name: 'Navbar',
     data() {
@@ -60,29 +61,40 @@ export default {
 
     },
     mounted() {
-      User.auth()
-      .catch(() => {
-          this.isLoggedIn = false;
-          localStorage.removeItem("auth");
-          if(this.$route.name == 'Dashboard'){
-            this.$router.push({name: 'Home'})
-          }
+    //   User.auth()
+    //   .catch(() => {
+    //       this.isLoggedIn = false;
+    //       localStorage.removeItem("auth");
+    //       if(this.$route.name == 'Dashboard'){
+    //         this.$router.push({name: 'Home'})
+    //       }
 
-      })
-      this.$root.$on("login", () =>{
-        this.isLoggedIn = true;
-      })
-      this.isLoggedIn = !!localStorage.getItem("auth");
+    //   })
+    //   this.$root.$on("login", () =>{
+    //     this.isLoggedIn = true;
+    //   })
+    //   this.isLoggedIn = !!localStorage.getItem("auth");
     },
     methods: {
+      ...mapActions(['signOut']),
+
       logout() {
-        User.logout().then(() => {
-          this.isLoggedIn = false;
-          localStorage.removeItem("auth");
-          this.$router.push({name: 'Login'})
-        })
+
+        this.signOut()
+        //this.$router.push({name: 'Login'})
+        // User.logout().then(() => {
+        //   this.isLoggedIn = false;
+        //   localStorage.removeItem("auth");
+          
+        // })
       }
     },
+    computed: {
+      ...mapGetters({
+        authenticated: 'authenticated',
+        user: 'user'
+      })
+    }
     
 }
 </script>

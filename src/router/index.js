@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import NotFound from '../components/layouts/NotFound.vue'
+import store from './../Store'
 
 Vue.use(VueRouter)
 
@@ -14,19 +15,19 @@ Vue.use(VueRouter)
   {
     path: '/about',
     name: 'About',
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    component: () => import('../views/About.vue')
   },
   {
     path: '/FareCalculationResult',
     name: 'FareCalculationResult',
-    component: () => import(/* webpackChunkName: "FareCalculationResult" */ '../components/FareCalculationResult.vue'),
+    component: () => import('../components/FareCalculationResult.vue'),
     // meta: {CalculatedOnly: true}
 
   },
   {
     path: '/Reserveer',
     name: 'ReservationForm',
-    component: () => import(/* webpackChunkName: "ReservationForm" */ '../components/ReservationForm.vue')
+    component: () => import('../components/ReservationForm.vue')
     // props:true,
     // meta: {CalculatedOnly: true}
 
@@ -55,31 +56,31 @@ Vue.use(VueRouter)
     path: '/verify-email',
     name: 'verifyEmail',
     meta: {guestOnly: true},
-    component: () => import(/* webpackChunkName: "verifyEmail" */ '../components/auth/VerifyEmail.vue'),
+    component: () => import('../components/auth/VerifyEmail.vue'),
   },
   {
     path: '/forgot-password',
     name: 'forgotPassword',
     meta: {guestOnly: true},
-    component: () => import(/* webpackChunkName: "ForgotPassword" */ '../components/auth/ForgotPassword.vue'),
+    component: () => import('../components/auth/ForgotPassword.vue'),
   },
   {
     path: '/reset-password',
     name: 'resetPassword',
     meta: {guestOnly: true},
-    component: () => import(/* webpackChunkName: "ResetPassword" */ '../components/auth/ResetPassword.vue'),
+    component: () => import('../components/auth/ResetPassword.vue'),
   },
   {
     path: '/payment',
     name: 'PaymentResult',
     meta: {authOnly: true},
-    component: () => import(/* webpackChunkName: "PaymentResult" */ '../components/payment/PaymentResult.vue'),
+    component: () => import('../components/payment/PaymentResult.vue'),
   },
   {
     path: '/reservations',
     name: 'Reservations',
     meta: {authOnly: true},
-    component: () => import(/* webpackChunkName: "Reservations" */ '../components/auth/Reservations.vue'),
+    component: () => import('../components/auth/Reservations.vue'),
   },
   { path: '*',
     name: 'notFound' ,
@@ -92,7 +93,7 @@ const router = new VueRouter({
 })
 
 function isLoggedIn() {
-  return localStorage.getItem("auth")
+  return store.getters.authenticated
 }
 function isCalculated() {
   return localStorage.getItem("calculated")
@@ -110,7 +111,7 @@ router.beforeEach((to, from, next) => {
     } else {
       next()
     }
-  } else   if (to.matched.some(record => record.meta.guestOnly)) {
+  } else if (to.matched.some(record => record.meta.guestOnly)) {
     // this route requires auth, check if logged in
     // if not, redirect to login page.
     if (isLoggedIn()) {

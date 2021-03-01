@@ -1,37 +1,75 @@
-// import { isLoggedIn } from "./utils";
-export default {
-    namespaced: true, 
-    state: {
-        isLoggedIn: false,
-        user: {}
-    },
-    mutations: {
-        setUser(state, payload) {
-            state.user = payload;
-        },
-        setLoggedIn(state, payload) {
-            state.isLoggedIn = payload;
-        }
-    },
-    actions: {
-        // async loadUser({ commit, dispatch }) {
-        //     if (isLoggedIn) {
-        //         try {
-        //             const user = (await axios.get("/user")).data;
-        //             commit("setUser", user);
-        //             commit("setLoggedIn", true);
-        //         } catch (error) {
-        //             console.log(error)
-        //         }
-        //     }
-        // }
-    }
+import User from "./../../Api/User";
+import router from "./../../router";
+
+const state = {
+  authenticated: false,
+  user: null,
 };
 
-// export default {
+const getters = {
+  authenticated(state) {
+    return state.authenticated;
+  },
 
-//     state,
-//     getters,
-//     actions,
-//     mutations
-// }
+  user(state) {
+    return state.user;
+  },
+};
+
+const actions = {
+  async signIn({ dispatch, commit }, credentials) {
+    return new Promise((resolve, reject) => {
+      User.login(credentials)
+        .then((response) => {
+          commit("SET_AUTHENTICATED", true);
+          commit("SET_USER", response.data);
+          resolve({
+            isFulfilled: true,
+            response: response.data,
+          });
+          return dispatch("me");
+        })
+        .catch((error) => {
+          reject({ isFulfilled: false, error: error });
+        });
+    });
+  },
+
+  async signOut({ commit }) {
+    User.logout().then(() => {
+      commit("SET_AUTHENTICATED", false);
+      commit("SET_USER", null);
+      router.push({ name: "Login" });
+    });
+
+    //return dispatch("me");
+  },
+
+  me({ commit }) {
+    return User.auth()
+      .then((response) => {
+        commit("SET_AUTHENTICATED", true);
+        commit("SET_USER", response.data);
+      })
+      .catch(() => {
+        commit("SET_AUTHENTICATED", false);
+        commit("SET_USER", null);
+      });
+  },
+};
+
+const mutations = {
+  SET_AUTHENTICATED(state, value) {
+    state.authenticated = value;
+  },
+  SET_USER(state, value) {
+    state.user = value;
+  },
+};
+
+export default {
+  state,
+  getters,
+  actions,
+  mutations,
+};
