@@ -17,13 +17,39 @@
                   v-model="StartInput"
                   :data="placesStart"
                   placeholder="Voer een adres in"
-                  field="title"
+                  field="place_name"
                   icon="map-marker"
                   :loading="isFetchingStart"
+                  @input="getAsyncDataStart"
                   @select="assignTagStart($event)"
-                  @typing="getAsyncDataStart"
                 >
-                  <template slot="empty">No results found</template>
+                  <template slot-scope="props">
+                    <div class="media">
+                       <div v-if='props.option.place_type[0] === CATEGORIES.ADDRESS.name' class="media-left">
+                        <b-icon  pack="fas" :icon="CATEGORIES.ADDRESS.icon_name"> </b-icon>
+                      </div>
+                       <div  v-else-if='props.option.place_type[0] === "poi" && props.option.properties.category === CATEGORIES.AIRPORT.name ' class="media-left">
+                        <b-icon  pack="fas" :icon="CATEGORIES.AIRPORT.icon_name"> </b-icon>
+                      </div>
+                       <div  v-else-if='props.option.place_type[0] === "poi" && props.option.properties.category === CATEGORIES.RESTAURANT.name ' class="media-left">
+                        <b-icon  pack="fas" :icon="CATEGORIES.RESTAURANT.icon_name"> </b-icon>
+                      </div> 
+                      <div  v-else-if='props.option.place_type[0] === "poi" && props.option.properties.category === CATEGORIES.HISTORIC_SITE.name ' class="media-left">
+                        <b-icon  pack="fas" :icon="CATEGORIES.HISTORIC_SITE.icon_name"> </b-icon>
+                      </div>
+                      <div  v-else-if='props.option.place_type[0] === "poi" && props.option.properties.category === CATEGORIES.SUPERMARKET.name ' class="media-left">
+                        <b-icon  pack="fas" :icon="CATEGORIES.SUPERMARKET.icon_name "> </b-icon>
+                      </div>                                               
+                      <div v-else class="media-left">
+                        <b-icon  pack="fas" :icon="CATEGORIES.GENERAL.icon_name"> </b-icon>
+                      </div>
+
+                      <div class="media-content">
+                        {{ props.option.place_name }}
+
+                      </div>
+                    </div>
+                  </template>
                 </b-autocomplete>
               </b-field>
             </div>
@@ -32,15 +58,41 @@
                 <b-autocomplete
                   v-model="EndInput"
                   :data="PlacesEnd"
-                  icon="flag-checkered"
-                  type="is-danger"
                   placeholder="Voer een adres in"
-                  field="title"
+                  field="place_name"
+                  icon="map-marker"
                   :loading="isFetchingEnd"
+                  @input="getAsyncDataEnd"
                   @select="assignTagEnd($event)"
-                  @typing="getAsyncDataEnd"
                 >
-                  <template slot="empty">No results found</template>
+                  <template slot-scope="props">
+                    <div class="media">
+
+                       <div v-if='props.option.place_type[0] === CATEGORIES.ADDRESS.name' class="media-left">
+                        <b-icon  pack="fas" :icon="CATEGORIES.ADDRESS.icon_name"> </b-icon>
+                      </div>
+                       <div  v-else-if='props.option.place_type[0] === "poi" && props.option.properties.category === CATEGORIES.AIRPORT.name ' class="media-left">
+                        <b-icon  pack="fas" :icon="CATEGORIES.AIRPORT.icon_name"> </b-icon>
+                      </div>
+                       <div  v-else-if='props.option.place_type[0] === "poi" && props.option.properties.category === CATEGORIES.RESTAURANT.name ' class="media-left">
+                        <b-icon  pack="fas" :icon="CATEGORIES.RESTAURANT.icon_name"> </b-icon>
+                      </div> 
+                      <div  v-else-if='props.option.place_type[0] === "poi" && props.option.properties.category === CATEGORIES.HISTORIC_SITE.name ' class="media-left">
+                        <b-icon  pack="fas" :icon="CATEGORIES.HISTORIC_SITE.icon_name"> </b-icon>
+                      </div>
+                      <div  v-else-if='props.option.place_type[0] === "poi" && props.option.properties.category === CATEGORIES.SUPERMARKET.name ' class="media-left">
+                        <b-icon  pack="fas" :icon="CATEGORIES.SUPERMARKET.icon_name "> </b-icon>
+                      </div>                                               
+                      <div v-else class="media-left">
+                        <b-icon  pack="fas" :icon="CATEGORIES.GENERAL.icon_name"> </b-icon>
+                      </div>
+
+                      <div class="media-content">
+                        {{ props.option.place_name }}
+
+                      </div>
+                    </div>
+                  </template>
                 </b-autocomplete>
               </b-field>
             </div>
@@ -85,6 +137,7 @@ import $ from "jquery";
 import debounce from "lodash/debounce";
 import { DecryptKey, HereApiKey } from "../variables/keys";
 import { CALCULATION_CONSTANTS } from "../variables/fareCalculations";
+import { CATEGORIES } from '../variables/mapBox/PlaceCategories'
 
 export default {
   name: "FareCalculation",
@@ -123,11 +176,10 @@ export default {
           endAddressGeo: "",
         },
       ],
-      search: null,
       isFetchingStart: false,
       isFetchingEnd: false,
-
-      APIKEY: "4L8Nsl9VR_O3VV-MxXIlujMALfBGteJLT-6q25X4VuI",
+      selected: null,
+      CATEGORIES: CATEGORIES
     };
   },
   created() {
@@ -144,56 +196,56 @@ export default {
     passData() {
       $(".pageloader").addClass("is-active");
       setTimeout(() => {
-      // console.log(response);
+        // console.log(response);
 
-      sessionStorage.setItem("map_url", this.returnResult[0].map_url);
-      sessionStorage.setItem(
-        "startAddress",
-        this.CryptoJS.AES.encrypt(
-          this.returnResult[0].startAddress,
-          DecryptKey
-        ).toString()
-      );
-      sessionStorage.setItem(
-        "endAddress",
-        this.CryptoJS.AES.encrypt(
-          this.returnResult[0].endAddress,
-          DecryptKey
-        ).toString()
-      );
-      sessionStorage.setItem(
-        "startAddressGeo",
-        this.CryptoJS.AES.encrypt(
-          this.returnResult[0].startAddressGeo,
-          DecryptKey
-        ).toString()
-      );
-      sessionStorage.setItem(
-        "endAddressGeo",
-        this.CryptoJS.AES.encrypt(
-          this.returnResult[0].endAddressGeo,
-          DecryptKey
-        ).toString()
-      );
-      sessionStorage.setItem("distance", this.returnResult[0].distance);
-      sessionStorage.setItem("traveltime", this.returnResult[0].travelTime);
-      sessionStorage.setItem(
-        "farePrice",
-        this.CryptoJS.AES.encrypt(
-          this.returnResult[0].farePrice,
-          DecryptKey
-        ).toString()
-      );
-      sessionStorage.setItem(
-        "amountOfPeople",
-        this.returnResult[0].amountOfPeople
-      );
+        sessionStorage.setItem("map_url", this.returnResult[0].map_url);
+        sessionStorage.setItem(
+          "startAddress",
+          this.CryptoJS.AES.encrypt(
+            this.returnResult[0].startAddress,
+            DecryptKey
+          ).toString()
+        );
+        sessionStorage.setItem(
+          "endAddress",
+          this.CryptoJS.AES.encrypt(
+            this.returnResult[0].endAddress,
+            DecryptKey
+          ).toString()
+        );
+        sessionStorage.setItem(
+          "startAddressGeo",
+          this.CryptoJS.AES.encrypt(
+            this.returnResult[0].startAddressGeo,
+            DecryptKey
+          ).toString()
+        );
+        sessionStorage.setItem(
+          "endAddressGeo",
+          this.CryptoJS.AES.encrypt(
+            this.returnResult[0].endAddressGeo,
+            DecryptKey
+          ).toString()
+        );
+        sessionStorage.setItem("distance", this.returnResult[0].distance);
+        sessionStorage.setItem("traveltime", this.returnResult[0].travelTime);
+        sessionStorage.setItem(
+          "farePrice",
+          this.CryptoJS.AES.encrypt(
+            this.returnResult[0].farePrice,
+            DecryptKey
+          ).toString()
+        );
+        sessionStorage.setItem(
+          "amountOfPeople",
+          this.returnResult[0].amountOfPeople
+        );
 
-      sessionStorage.setItem("calculated", true);
+        sessionStorage.setItem("calculated", true);
 
-      this.$router.push({
-        name: "FareCalculationResult",
-      });
+        this.$router.push({
+          name: "FareCalculationResult",
+        });
       }, 500);
     },
     /**
@@ -242,33 +294,28 @@ export default {
         });
       });
     },
-    assignTagStart: function(selected) {
-      this.StartInput = selected;
+    assignTagStart: function() {
       this.FareCalculateValidation();
     },
-    assignTagEnd: function(selected) {
-      this.EndInput = selected;
+    assignTagEnd: function() {
       this.FareCalculateValidation();
     },
-    getAsyncDataStart: debounce(function(Q) {
+    getAsyncDataStart: debounce(function() {
       this.placesStart = [];
-      if (!Q.length) {
+      if (!this.StartInput.length) {
         this.placesStart = [];
         return;
       }
       this.isFetchingStart = true;
-      this.$http
+      axios
         .get(
-          "https://places.ls.hereapi.com/places/v1/suggest?apikey=4L8Nsl9VR_O3VV-MxXIlujMALfBGteJLT-6q25X4VuI&at=52.5159,13.3777&q=" +
-            Q
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${this.StartInput}.json?autocomplete=true&language=nl&country=NL&access_token=pk.eyJ1Ijoib2lkYmlkIiwiYSI6ImNrZGJ0c29kMDAzdnQyc3FxcGRlaHR0aXEifQ.MLtBfQB6Hctj-y3FDuuckg`
         )
         .then(({ data }) => {
-          this.placesStart = [];
-          for (let index = 0; index < data.suggestions.length; index++) {
-            if (data.suggestions[index].includes("Nederland")) {
-              this.placesStart.push(data.suggestions[index]);
-            }
-          }
+          console.log(data.features)
+          data.features.forEach((place) => {
+            this.placesStart.push(place);
+          });
         })
         .catch((error) => {
           this.placesStart = [];
@@ -280,25 +327,22 @@ export default {
       this.FareCalculateValidation();
     }, 500),
 
-    getAsyncDataEnd: debounce(function(Q) {
-      this.PlacesEnd = [];
-      if (!Q.length) {
+    getAsyncDataEnd: debounce(function() {
+    this.PlacesEnd = [];
+      if (!this.EndInput.length) {
         this.PlacesEnd = [];
         return;
       }
       this.isFetchingEnd = true;
-      this.$http
+      axios
         .get(
-          "https://places.ls.hereapi.com/places/v1/suggest?apikey=4L8Nsl9VR_O3VV-MxXIlujMALfBGteJLT-6q25X4VuI&at=52.5159,13.3777&q=" +
-            Q
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${this.EndInput}.json?autocomplete=true&language=nl&country=NL&access_token=pk.eyJ1Ijoib2lkYmlkIiwiYSI6ImNrZGJ0c29kMDAzdnQyc3FxcGRlaHR0aXEifQ.MLtBfQB6Hctj-y3FDuuckg`
         )
         .then(({ data }) => {
-          this.PlacesEnd = [];
-          for (let index = 0; index < data.suggestions.length; index++) {
-            if (data.suggestions[index].includes("Nederland")) {
-              this.PlacesEnd.push(data.suggestions[index]);
-            }
-          }
+          console.log(data.features)
+          data.features.forEach((place) => {
+            this.PlacesEnd.push(place);
+          });
         })
         .catch((error) => {
           this.PlacesEnd = [];
@@ -385,7 +429,7 @@ export default {
           amountOfCommas++;
         }
       }
-      if (amountOfCommas == 2 || amountOfCommas == 3) {
+      if (amountOfCommas == 2 || amountOfCommas == 3 || amountOfCommas == 4) {
         return true;
       } else {
         return false;
