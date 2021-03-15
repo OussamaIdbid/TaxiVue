@@ -1,5 +1,5 @@
 import User from "./../../Api/User";
-import router from "./../../router";
+// import router from "./../../router";
 
 const state = {
   authenticated: false,
@@ -36,13 +36,17 @@ const actions = {
   },
 
   async signOut({ commit }) {
-    User.logout().then(() => {
-      commit("SET_AUTHENTICATED", false);
-      commit("SET_USER", null);
-      router.push({ name: "Login" });
-    });
+    return new Promise((resolve, reject) => {
+      User.logout().then(() => {
+        commit("SET_AUTHENTICATED", false);
+        commit("SET_USER", null);
+        resolve({ isFulfilled: true})
 
-    //return dispatch("me");
+      })
+      .catch( (error) => {
+        reject({isFulfilled: false, error})
+      })
+    })
   },
 
   me({ commit }) {
