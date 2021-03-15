@@ -47,6 +47,11 @@
         </div>
       </div>
     </div>
+      <b-loading
+      :is-full-page="true"
+      v-model="isLoading"
+      :can-cancel="true"
+    ></b-loading>
   </section>
 </template>
 
@@ -69,6 +74,7 @@ export default {
       error_password: "",
       error_password_confirmation: "",
       errors: [],
+      isLoading: false
     };
   },
   mounted() {
@@ -76,10 +82,12 @@ export default {
   },
   methods: {
     register() {
+      this.isLoading = true
       this.errors = [];
       this.form.name = this.firstName + " " + this.lastName;
       User.register(this.form)
         .then(() => {
+          this.isLoading = false;
           this.$router.push({ name: "Login" });
           this.$buefy.toast.open({
             message:
