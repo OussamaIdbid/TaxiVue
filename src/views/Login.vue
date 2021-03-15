@@ -39,6 +39,11 @@
         </div>
       </div>
     </div>
+    <b-loading
+      :is-full-page="true"
+      v-model="isLoading"
+      :can-cancel="true"
+    ></b-loading>
   </section>
 </template>
 
@@ -56,6 +61,7 @@ export default {
       errors: [],
       isLoading: false,
       verificationMessage: "",
+      
     };
   },
   mounted() {
@@ -65,17 +71,19 @@ export default {
   methods: {
     ...mapActions(["signIn"]),
     login() {
+      this.isLoading = true
       this.signIn(this.form)
         .then((response) => {
           if (response.isFulfilled == true) {
             if (response.response.verified == "false") {
-              // console.log(response.data.message);
+              this.isLoading = false;
               this.verificationMessage = response.response.message;
               this.$buefy.toast.open({
                 message: this.verificationMessage,
                 type: "is-info",
               });
             } else {
+              this.isLoading = false;
               this.$buefy.toast.open({
                 message: "Ingelogd",
                 type: "is-success",
@@ -89,15 +97,13 @@ export default {
           }
         })
         .catch((error) => {
-          if (error.isFulfilled == false) {
-            console.log(error);
+          if (!error.isFulfilled) {
+            this.isLoading = false            
             if (error.error.response.status === 422) {
               console.log(error.error.response.data.errors);
               this.errors = error.error.response.data.errors;
             }
           }
-
-          console.log(error);
         });
     },
   },
