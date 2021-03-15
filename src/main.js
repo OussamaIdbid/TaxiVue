@@ -15,7 +15,9 @@ import VueCryptojs from "vue-cryptojs";
 import MaterialIcons from "material-design-icons";
 import InfiniteLoading from "vue-infinite-loading";
 import Moment from "moment";
+import VueI18n from 'vue-i18n'
 
+Vue.use(VueI18n)
 Moment.locale("nl");
 
 Vue.use(InfiniteLoading, {
