@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import FareCalculation from "../FareCalculation";
+import FareCalculation from "../reservation/FareCalculation";
 export default {
   name: "Section1",
   components: {
