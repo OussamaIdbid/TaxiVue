@@ -34,6 +34,7 @@
     "vue-cookies": "^1.7.4",
     "vue-cryptojs": "^2.1.5",
     "vue-debounce": "^2.5.7",
+    "vue-i18n": "^8.24.1",
     "vue-infinite-loading": "^2.4.5",
     "vue-moment": "^4.1.0",
     "vue-resource": "^1.5.1",
