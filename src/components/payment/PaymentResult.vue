@@ -69,7 +69,7 @@
 <script>
 import Reservation from "../../Api/Reservation";
 import User from "../../Api/User";
-import { DecryptKey } from "../../variables/keys";
+import { DecryptKey } from "../../constants/keys";
 
 export default {
   name: "PaymentResult",
