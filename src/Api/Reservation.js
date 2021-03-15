@@ -12,7 +12,7 @@ export default {
     async updateReservation(id,form) {
         await Csrf.getCookie();
 
-        return Api.post('/reservations/update/' + id, form);
+        return Api.post(`/reservations/update/${id}`, form);
     },
     async getReservations() {
         await Csrf.getCookie();
@@ -24,21 +24,21 @@ export default {
         
         return Api.get("/allReservations");
     },
-    async getReservation(Id) {
+    async getReservation(id) {
         await Csrf.getCookie();
         
-        return Api.get("/reservations/" + Id)
+        return Api.get(`/reservations/${id}`)
     },
-    async getReservationbyOrderId(Id) {
+    async getReservationbyOrderId(id) {
         await Csrf.getCookie();
         
-        return Api.get("/reservation/" + Id)
+        return Api.get(`/reservation/${id}`)
     },
     Payment(price) {
-        return Api.post('/payment/' + price);
+        return Api.post(`/payment/${price}`);
     },
     RefundPayment(PaymentId, refundPrice){
-        return Api.post('/payment/' + PaymentId + '/' + refundPrice);
+        return Api.post( `/payment/${PaymentId}/${refundPrice}`);
     },
     async getWebhook(orderId) {
         await Csrf.getCookie();
