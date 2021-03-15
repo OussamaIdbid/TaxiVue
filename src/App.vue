@@ -1,20 +1,15 @@
 <template>
   <div id="app">
-    <div class="pageloader is-danger"><span class="title"></span></div>
+    <div id="loader" class="pageloader is-danger"><span class="title"></span></div>
     <Navbar />
     <router-view />
-
     <Footer />
-    <!--<Demo />-->
   </div>
 </template>
 
 <script>
-//import HelloWorld from './components/HelloWorld.vue'
-
 import Navbar from "./components/layouts/Navbar";
 import Footer from "./components/layouts/Footer";
-//import Demo from './c0omponents/VuetifyDemo'
 
 export default {
   name: "App",
@@ -45,7 +40,16 @@ body {
   min-height: 100vh;
   flex-direction: column;
 }
+.step-items {
+    width:100% !important;
+}
+.steps .step-item .step-marker {
+    position:initial;
+}
+.steps .step-item .step-details {
+    margin-top:0 !important;
 
+}
 .Site-content {
   flex: 1;
 }
@@ -146,11 +150,7 @@ button:focus {
 #column-container {
   flex-direction: row;
 }
-/* #results-tile{
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 0.5em 1em -0.125em rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.02);
-} */
+
 #km-text,
 #min-text {
   font-size: small;
@@ -188,18 +188,12 @@ button:focus {
   border-bottom-style: groove;
   border-bottom-width: 1px;
 }
-.rounded-container {
-  border-radius: 20px;
-}
 .footer {
 }
 
 #map {
   width: 500px;
   height: 500px;
-}
-.ui-autocomplete {
-  background-color: inherit;
 }
 /*Mobile breakpoints*/
 @media only screen and (max-width: 768px) {
