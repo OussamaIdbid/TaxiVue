@@ -40,12 +40,12 @@
           </p>
         </b-collapse>
       </div>
-      <div
+      <!-- <div
         class="column is is-one-third has-text-danger"
         id="section-3-icon-container"
       >
         <i id="section_3_icon" class="fas fa-address-card"></i>
-      </div>
+      </div> -->
     </div>
   </section>
 </template>
