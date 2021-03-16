@@ -273,21 +273,19 @@ export default {
         const travelTimeInMin = response.data.routes.duration / 60
         const travelTimeInHours = timeConvertToString(travelTimeInMin);
 
-        calculateTaxiFare(distanceInKm, travelTimeInMin, this.categorySelect.id)
+        const farePrice = calculateTaxiFare(distanceInKm, travelTimeInMin, this.categorySelect.id)
 
         sessionStorage.setItem("startObject", this.CryptoJS.AES.encrypt(stringifiedStartObject,DecryptKey).toString());
         sessionStorage.setItem("endObject",this.CryptoJS.AES.encrypt(stringifiedEndObject, DecryptKey).toString());
         sessionStorage.setItem("routeObject",this.CryptoJS.AES.encrypt(stringifiedRouteObject,DecryptKey).toString());
         sessionStorage.setItem("amountOfPeople", this.CryptoJS.AES.encrypt(this.categorySelect.text, DecryptKey).toString());
         sessionStorage.setItem("travelTime", this.CryptoJS.AES.encrypt(travelTimeInHours, DecryptKey).toString())
+        sessionStorage.setItem("farePrice", this.CryptoJS.AES.encrypt(farePrice, DecryptKey).toString())
 
         sessionStorage.setItem("calculated", true);
       })
-      .then( () => {
-          this.$router.push({
-          name: "FareCalculationResult",
-        });
-      })
+      .then(this.$router.push({name: "FareCalculationResult"})
+      )
     },
     assignTagStart(slot) {
       this.selectedStart = slot;

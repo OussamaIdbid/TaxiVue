@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { HereApiKey } from "../../variables/keys";
+import { HereApiKey } from "../../constants/keys";
 
 export default {
   name: "HereMap",
@@ -17,6 +17,8 @@ export default {
     center: Object,
     startLocation: String,
     endLocation: String,
+    startAddress: String,
+    endAddress: String,
   },
   data() {
     return {
@@ -24,6 +26,7 @@ export default {
       apikey: HereApiKey,
       map: null,
       ui: null,
+      bubble: null,
     };
   },
   async mounted() {
@@ -57,10 +60,10 @@ export default {
 
       // add UI
       this.ui = H.ui.UI.createDefault(this.map, maptypes);
-      this.ui.getControl('zoom').setVisibility(false)
-      this.ui.getControl('scalebar').setVisibility(false)
-      this.ui.getControl('mapsettings').setVisibility(false)
-      console.log(this.ui.getControl())
+      this.ui.getControl("zoom").setVisibility(false);
+      this.ui.getControl("scalebar").setVisibility(false);
+      this.ui.getControl("mapsettings").setVisibility(false);
+      console.log(this.ui.getControl());
       // End rendering the initial map
     },
     calculateRouteFromAtoB(platform) {
@@ -104,9 +107,28 @@ export default {
         // And zoom to its bounding rectangle
         this.map.getViewModel().setLookAtData({
           bounds: polyline.getBoundingBox(),
-          zoom: 11
+          zoom: 11,
         });
       });
+    },
+    /**
+     * Opens/Closes a infobubble
+     * @param  {H.geo.Point} position     The location on the map.
+     * @param  {String} text              The contents of the infobubble.
+     */
+    openBubble(position, text) {
+      if (!this.bubble) {
+        this.bubble = new H.ui.InfoBubble(
+          position,
+          // The FO property holds the province name.
+          { content: text }
+        );
+        this.ui.addBubble(this.bubble);
+      } else {
+        this.bubble.setPosition(position);
+        this.bubble.setContent(text);
+        this.bubble.open();
+      }
     },
     /**
      * Creates a series of H.map.Marker points from the route and adds them to the map.
@@ -151,7 +173,13 @@ export default {
         lastMarker.instruction = lastAction.instruction;
         group.addObject(lastMarker);
 
-        // Add the maneuvers group to the map
+        group.getObjects().forEach((marker, index) => {
+          const addresses = [this.startAddress, this.endAddress];
+          marker.addEventListener("tap", (evt) => {
+            this.openBubble(evt.target.getGeometry(), addresses[index]);
+          });
+        });
+
         this.map.addObject(group);
       });
     },
@@ -171,8 +199,7 @@ html,
 body {
   height: 100%;
 }
-.H_l_right .H_l_vertical .H_ctl{
+.H_l_right .H_l_vertical .H_ctl {
   display: none !important;
 }
-
 </style>
