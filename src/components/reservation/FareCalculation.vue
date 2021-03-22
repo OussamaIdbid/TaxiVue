@@ -182,7 +182,8 @@
                       </div>
 
                       <div class="media-content">
-                        {{ props.option.place_name }}
+                        <h6>{{ props.option.place_name }}</h6>
+
                       </div>
                     </div>
                   </template>
@@ -196,7 +197,7 @@
                 icon="user-friends"
                 icon-pack="fas"
                 v-model="categorySelect"
-                v-on:input="FareCalculateValidation()"
+                v-on:input="FareCalculateValidation(StartInput, EndInput, categorySelect, 'calculate-fare')"
               >
                 <option
                   aria-placeholder="Aantal personen"
@@ -225,12 +226,13 @@
 <script>
 import axios from "axios";
 import debounce from "lodash/debounce";
-import { DecryptKey, MapBoxKey } from "../../constants/keys";
+import { MapBoxKey } from "../../constants/keys";
 import { CATEGORIES } from "../../constants/mapBox/PlaceCategories";
 import {
   SEARCH_API_BASE
 } from "../../constants/mapBox/BaseRequests";
 import { getRoute, calculateTaxiFare, timeConvertToString, FareCalculateValidation} from "./../../functions/reservationCalculation";
+import { mapActions } from "vuex";
 export default {
   name: "FareCalculation",
   data() {
@@ -253,6 +255,7 @@ export default {
       isFetchingStart: false,
       isFetchingEnd: false,
       CATEGORIES: CATEGORIES,
+      FareCalculateValidation: FareCalculateValidation
     };
   },
   created() {
@@ -262,25 +265,28 @@ export default {
     localStorage.setItem("calculated", false);
   },
   methods: {
+    ...mapActions('CurrentReservation', ['pushReservation']),
     processForm() {
       document.getElementById("loader").classList.add("is-active");
       getRoute(this.selectedStart, this.selectedEnd).then((response) => {
-        
-        const stringifiedStartObject = JSON.stringify(this.selectedStart);
-        const stringifiedEndObject = JSON.stringify(this.selectedEnd);
-        const stringifiedRouteObject = JSON.stringify(response.data);
-        const distanceInKm = response.data.routes.distance / 1000
-        const travelTimeInMin = response.data.routes.duration / 60
+        console.log(response)
+        const distanceInKm = Math.round(response.data.routes[0].distance / 1000)
+        const distanceInKmString = distanceInKm + 'km' 
+        const travelTimeInMin = response.data.routes[0].duration / 60
         const travelTimeInHours = timeConvertToString(travelTimeInMin);
+        console.log(this.categorySelect.text)
 
-        const farePrice = calculateTaxiFare(distanceInKm, travelTimeInMin, this.categorySelect.id)
+        const farePrice = calculateTaxiFare(distanceInKm, travelTimeInMin, this.categorySelect.text)
 
-        sessionStorage.setItem("startObject", this.CryptoJS.AES.encrypt(stringifiedStartObject,DecryptKey).toString());
-        sessionStorage.setItem("endObject",this.CryptoJS.AES.encrypt(stringifiedEndObject, DecryptKey).toString());
-        sessionStorage.setItem("routeObject",this.CryptoJS.AES.encrypt(stringifiedRouteObject,DecryptKey).toString());
-        sessionStorage.setItem("amountOfPeople", this.CryptoJS.AES.encrypt(this.categorySelect.text, DecryptKey).toString());
-        sessionStorage.setItem("travelTime", this.CryptoJS.AES.encrypt(travelTimeInHours, DecryptKey).toString())
-        sessionStorage.setItem("farePrice", this.CryptoJS.AES.encrypt(farePrice, DecryptKey).toString())
+        this.pushReservation({
+          StartObject: this.selectedStart,
+          EndObject: this.selectedEnd,
+          routeObject: response.data,
+          amountOfPeople: this.categorySelect.text,
+          travelTime: travelTimeInHours,
+          farePrice: farePrice,
+          distance: distanceInKmString
+        })
 
         sessionStorage.setItem("calculated", true);
       })
