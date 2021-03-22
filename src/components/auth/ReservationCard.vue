@@ -1,41 +1,54 @@
 <template>
   <div class="column is-one-third is-centered" id="card-column">
-    <p>{{ date }}</p>
+    <h6 class="info-date">{{ date }}</h6>
     <div class="card" id="order-route-card">
       <div class="card-content">
         <div class="content">
           <div class="columns">
-            <div class="column is-1">
-               <div class="columns" style="flex-direction: column">
-                <div class="column is-1">
-                  <span class="material-icons"> fiber_manual_record </span>
-                </div>
-                <div class="column is-1">
-                  
-                </div>
-                <div class="column is-1">
-                  <span class="material-icons"> location_on </span>
-                </div>
-              </div>
-            </div>
-            <div class="column is-8">
+            <div class="column">
+              <b-skeleton
+                v-if="isLoading"
+                width="100%"
+                :animated="true"
+              ></b-skeleton>
+              <b-skeleton
+                v-if="isLoading"
+                width="100%"
+                :animated="true"
+              ></b-skeleton>
               <div class="columns" style="flex-direction: column">
-                <div class="column">
-                  <p class="label">Vertrekpunt</p>
-                  <p class="info">{{ startAddress }}</p>
+                <div class="column-start">
+                  <span v-if="!isLoading" class="material-icons">
+                    fiber_manual_record
+                  </span>
+                  <div v-if="!isLoading" class="info-start-wrapper">
+                    <p class="label">Vertrekpunt</p>
+                    <p class="info-start">{{ startAddress }}</p>
+                  </div>
                 </div>
-                <div class="column">
-                  <p class="label">Eindbestemming</p>
-                  <p class="info">{{ endAddress }}</p>
-                </div>
+                <div class="column-end">
+                  <span v-if="!isLoading" class="material-icons">
+                    location_on
+                  </span>
 
+                  <div v-if="!isLoading" class="info-end-wrapper">
+                    <p class="label">Eindbestemming</p>
+                    <p class="info-end">{{ endAddress }}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
       <footer class="card-footer">
-        <a @click="isComponentModalActive = true" class="card-footer-item">Bekijk</a>
+        <a class="card-footer-item">
+          <a v-if="!isLoading"  @click="isComponentModalActive = true">Bekijk</a>
+              <b-skeleton
+                v-if="isLoading"
+                :animated="true"
+              ></b-skeleton>
+        </a>
       </footer>
     </div>
     <b-modal
@@ -69,15 +82,28 @@ export default {
       endAddress: "",
       date: "",
       isComponentModalActive: false,
+      isLoading: true,
     };
   },
   mounted() {
-    Reservation.getReservation(this.OrderID).then((response) => {
-      this.reservationData = response.data;
-      this.startAddress = response.data.start_address;
-      this.endAddress = response.data.end_address;
-      this.date = moment(response.data.pickup_date).format("D MMMM YYYY");
-    });
+    Reservation.getReservation(this.OrderID)
+      .then((response) => {
+        const filteredStartAddress = response.data.start_address.replace(
+          ", Nederland",
+          ""
+        );
+        const filteredEndAddress = response.data.end_address.replace(
+          ", Nederland",
+          ""
+        );
+        this.reservationData = response.data;
+        this.startAddress = filteredStartAddress;
+        this.endAddress = filteredEndAddress;
+        this.date = moment(response.data.pickup_date).format("D MMMM YYYY");
+      })
+      .then(() => {
+        this.isLoading = false;
+      });
   },
   components: {
     ReservationsInfo,
@@ -86,14 +112,27 @@ export default {
 </script>
 
 <style scoped>
-.card {
-  border-radius: none;
-  box-shadow: none;
-}
 .material-icons {
   color: #f14668 !important;
 }
-.info {
+.column-start,
+.column-end {
+  display: flex;
+}
+
+.column-start {
+  margin-bottom: 1rem;
+}
+.info-date{ 
+  margin-bottom: 0.5rem;
+  margin-left: 1rem;
+}
+.info-start-wrapper,
+.info-end-wrapper {
+  margin-left: 1rem;
+}
+.info-start,
+.info-end {
   width: 100%;
   /*text-align: end;*/
   font-weight: bold;
