@@ -47,7 +47,7 @@
         </div>
       </div>
     </div>
-      <b-loading
+    <b-loading
       :is-full-page="true"
       v-model="isLoading"
       :can-cancel="true"
@@ -74,7 +74,7 @@ export default {
       error_password: "",
       error_password_confirmation: "",
       errors: [],
-      isLoading: false
+      isLoading: false,
     };
   },
   mounted() {
@@ -82,7 +82,7 @@ export default {
   },
   methods: {
     register() {
-      this.isLoading = true
+      this.isLoading = true;
       this.errors = [];
       this.form.name = this.firstName + " " + this.lastName;
       User.register(this.form)
