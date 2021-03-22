@@ -14,7 +14,7 @@
                 :loading="isFetchingStart"
                 @input="getAsyncDataStart"
                 @select="assignTagStart($event)"
-                :disabled="startIsDisabled"
+                :disabled="inputIsDisabled"
               >
                 <template slot-scope="props">
                   <div class="media">
@@ -104,7 +104,7 @@
                 :loading="isFetchingEnd"
                 @input="getAsyncDataEnd"
                 @select="assignTagEnd($event)"
-                :disabled="endIsDisabled"
+                :disabled="inputIsDisabled"
               >
                 <template slot-scope="props">
                   <div class="media">
@@ -183,41 +183,265 @@
               </b-autocomplete>
             </b-field>
           </div>
+          <div v-if="!inputIsDisabled" class="buttons">
+            <button
+              id="recalculate-fare"
+              class="button is-danger has-text-centered"
+              @click="processForm()"
+            >
+              Bereken prijs
+            </button>
+            <button
+              id="cancel-edit-fare"
+              class="button is-danger has-text-centered"
+              @click="cancelEditFare()"
+            >
+              Annuleer
+            </button>
+          </div>
+          <button
+            v-if="inputIsDisabled"
+            id="cancel-edit-fare"
+            class="button is-danger has-text-centered"
+            @click="editFare()"
+          >
+            Wijzig je reis
+          </button>
         </div>
         <div class="is-divider-vertical" data-content=""></div>
-          <div class="column">
-            <b-field grouped>
-              <b-field label="Name" expanded>
-                <b-field>
-                  <b-select placeholder="Title">
-                    <option>Mr.</option>
-                    <option>Ms.</option>
-                  </b-select>
-                  <b-input placeholder="Name" expanded></b-input>
-                </b-field>
-              </b-field>
-              <b-field label="Email" expanded>
-                <b-input placeholder="some@email.com"></b-input>
-              </b-field>
-            </b-field>
+        <div class="column" id="details-column">
+          <div>
+            <b-icon pack="fas" icon="route" size="is-large"> </b-icon>
+            <h4>{{ reservation.reservation.distance }}</h4>
           </div>
+          <div>
+            <b-icon pack="fas" icon="stopwatch" size="is-large"> </b-icon>
+            <h4>{{ reservation.reservation.travelTime }}</h4>
+          </div>
+          <div>
+            <b-icon pack="fas" icon="euro-sign" size="is-large"> </b-icon>
+            <h4>{{ reservation.reservation.farePrice }}</h4>
+          </div>
+        </div>
       </div>
+
     </div>
+          <div id="step-overview-next">
+        <button
+          :disabled="!inputIsDisabled"
+          id="next-step"
+          class="button is-danger has-text-centered"
+          @click="nextStep()"
+        >
+          Volgende Stap
+        </button>
+      </div>
+    <b-loading
+      :is-full-page="true"
+      v-model="isLoading"
+      :can-cancel="true"
+    ></b-loading>
   </div>
 </template>
 
 <script>
 import { CATEGORIES } from "../../constants/mapBox/PlaceCategories";
-
+import axios from "axios";
+import debounce from "lodash/debounce";
+import { MapBoxKey } from "../../constants/keys";
+import { SEARCH_API_BASE } from "../../constants/mapBox/BaseRequests";
+import {
+  getRoute,
+  timeConvertToString,
+  calculateTaxiFare,
+  FareCalculateValidationEdit,
+} from "./../../functions/reservationCalculation";
+import { mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
       CATEGORIES: CATEGORIES,
-      startIsDisabled: true,
-      endIsDisabled: true
+      inputIsDisabled: true,
+      StartInput: "",
+      EndInput: "",
+      placesStart: [],
+      PlacesEnd: [],
+      selectedStart: [],
+      selectedEnd: [],
+      fare: null,
+      startAddressGeo: "",
+      endAddressGeo: "",
+      isFetchingStart: false,
+      isFetchingEnd: false,
+      isLoading: false,
     };
+  },
+  computed: {
+    ...mapGetters("CurrentReservation", ["reservation"]),
+    ...mapGetters(["authenticated"]),
+  },
+
+  mounted() {
+    this.StartInput = JSON.parse(
+      JSON.stringify(this.reservation)
+    ).reservation.StartObject.place_name;
+    this.EndInput = JSON.parse(
+      JSON.stringify(this.reservation)
+    ).reservation.EndObject.place_name;
+
+    this.selectedStart = JSON.parse(
+      JSON.stringify(this.reservation)
+    ).reservation.StartObject;
+
+    this.selectedEnd = JSON.parse(
+      JSON.stringify(this.reservation)
+    ).reservation.EndObject;
+  },
+  methods: {
+    ...mapActions("CurrentReservation", ["pushReservation", "progressStep"]),
+    editFare() {
+      this.inputIsDisabled = false;
+    },
+    nextStep() {
+      if (this.authenticated) {
+        this.progressStep();
+      } else {
+        this.$router.push({
+          name: "Login",
+          query: { redirect: this.$route.name },
+        });
+      }
+    },
+    cancelEditFare() {
+      this.inputIsDisabled = true;
+
+      this.StartInput = JSON.parse(
+        JSON.stringify(this.reservation)
+      ).reservation.StartObject.place_name;
+      this.EndInput = JSON.parse(
+        JSON.stringify(this.reservation)
+      ).reservation.EndObject.place_name;
+    },
+    processForm() {
+      getRoute(this.selectedStart, this.selectedEnd)
+        .then((response) => {
+          this.isLoading = true;
+          const distanceInKm = Math.round(
+            response.data.routes[0].distance / 1000
+          );
+          const dinstanceInKmString = distanceInKm + "km";
+          const travelTimeInMin = response.data.routes[0].duration / 60;
+          const travelTimeInHours = timeConvertToString(travelTimeInMin);
+
+          const farePrice = calculateTaxiFare(
+            distanceInKm,
+            travelTimeInMin,
+            this.reservation.reservation.amountOfPeople
+          );
+
+          this.pushReservation({
+            StartObject: this.selectedStart,
+            EndObject: this.selectedEnd,
+            routeObject: response.data,
+            amountOfPeople: this.reservation.reservation.amountOfPeople,
+            travelTime: travelTimeInHours,
+            farePrice: farePrice,
+            distance: dinstanceInKmString,
+          });
+        })
+        .then(() => {
+          this.isLoading = false;
+          this.inputIsDisabled = true;
+        });
+    },
+    assignTagStart(slot) {
+      this.selectedStart = slot;
+      FareCalculateValidationEdit(
+        this.StartInput,
+        this.EndInput,
+        "recalculate-fare"
+      );
+    },
+    assignTagEnd: function (slot) {
+      this.selectedEnd = slot;
+
+      FareCalculateValidationEdit(
+        this.StartInput,
+        this.EndInput,
+        "recalculate-fare"
+      );
+    },
+    getAsyncDataStart: debounce(function () {
+      this.placesStart = [];
+      if (!this.StartInput.length) {
+        this.placesStart = [];
+        return;
+      }
+      this.isFetchingStart = true;
+      axios
+        .get(
+          `${SEARCH_API_BASE}${this.StartInput}.json?autocomplete=true&language=nl&country=NL&access_token=${MapBoxKey}`
+        )
+        .then(({ data }) => {
+          data.features.forEach((place) => {
+            this.placesStart.push(place);
+          });
+        })
+        .catch((error) => {
+          this.placesStart = [];
+          throw error;
+        })
+        .finally(() => {
+          this.isFetchingStart = false;
+        });
+      FareCalculateValidationEdit(
+        this.StartInput,
+        this.EndInput,
+        "recalculate-fare"
+      );
+    }, 500),
+
+    getAsyncDataEnd: debounce(function () {
+      this.PlacesEnd = [];
+      if (!this.EndInput.length) {
+        this.PlacesEnd = [];
+        return;
+      }
+      this.isFetchingEnd = true;
+      axios
+        .get(
+          `${SEARCH_API_BASE}${this.EndInput}.json?autocomplete=true&language=nl&country=NL&access_token=${MapBoxKey}`
+        )
+        .then(({ data }) => {
+          data.features.forEach((place) => {
+            this.PlacesEnd.push(place);
+          });
+        })
+        .catch((error) => {
+          this.PlacesEnd = [];
+          throw error;
+        })
+        .finally(() => {
+          this.isFetchingEnd = false;
+        });
+      FareCalculateValidationEdit(
+        this.StartInput,
+        this.EndInput,
+        "recalculate-fare"
+      );
+    }, 500),
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+#step-overview-next {
+  display: flex;
+  justify-content: flex-end;
+}
+#details-column {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+</style>
