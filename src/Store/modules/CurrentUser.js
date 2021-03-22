@@ -30,23 +30,31 @@ const actions = {
           return dispatch("me");
         })
         .catch((error) => {
-          reject({ isFulfilled: false, error: error });
+          reject({
+            isFulfilled: false,
+            error: error,
+          });
         });
     });
   },
 
   async signOut({ commit }) {
     return new Promise((resolve, reject) => {
-      User.logout().then(() => {
-        commit("SET_AUTHENTICATED", false);
-        commit("SET_USER", null);
-        resolve({ isFulfilled: true})
-
-      })
-      .catch( (error) => {
-        reject({isFulfilled: false, error})
-      })
-    })
+      User.logout()
+        .then(() => {
+          commit("SET_AUTHENTICATED", false);
+          commit("SET_USER", null);
+          resolve({
+            isFulfilled: true,
+          });
+        })
+        .catch((error) => {
+          reject({
+            isFulfilled: false,
+            error,
+          });
+        });
+    });
   },
 
   me({ commit }) {
@@ -63,12 +71,8 @@ const actions = {
 };
 
 const mutations = {
-  SET_AUTHENTICATED(state, value) {
-    state.authenticated = value;
-  },
-  SET_USER(state, value) {
-    state.user = value;
-  },
+  SET_AUTHENTICATED: (state, value) => (state.authenticated = value),
+  SET_USER: (state, value) => (state.user = value),
 };
 
 export default {
