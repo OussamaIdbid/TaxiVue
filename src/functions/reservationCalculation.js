@@ -7,7 +7,7 @@ import {
     MapBoxKey
 } from './../constants/keys'
 import {
-    CALCULATION_CONSTANTS
+    CALCULATION_CONSTANTS, PERSON_CATEGORIES
 } from './../constants/fareCalculations'
 
 /**
@@ -46,19 +46,25 @@ export const getRoute = (startObject, endObject) => new Promise((resolve, reject
  * @returns 
  */
 export const calculateTaxiFare = (km, min, personCategory) => {
-    if (personCategory == 1) {
-        return (
-            CALCULATION_CONSTANTS.ONE_TO_FOUR_BASE +
-            CALCULATION_CONSTANTS.PER_KM_ONE_TO_FOUR * km +
-            CALCULATION_CONSTANTS.PER_MIN_ONE_TO_FOUR * min
-        ).toFixed(2);
-    } else {
-        return (
-            CALCULATION_CONSTANTS.FOUR_TO_SEVEN_BASE +
-            CALCULATION_CONSTANTS.PER_KM_FOUR_TO_SEVEN * km +
-            CALCULATION_CONSTANTS.PER_MIN_FOUR_TO_SEVEN * min
-        ).toFixed(2);
-    }
+  console.log(km)
+  console.log(min)
+    if (personCategory == PERSON_CATEGORIES[0].name) {
+      const price = (
+        CALCULATION_CONSTANTS.ONE_TO_FOUR_BASE +
+        CALCULATION_CONSTANTS.PER_KM_ONE_TO_FOUR * km +
+        CALCULATION_CONSTANTS.PER_MIN_ONE_TO_FOUR * min
+    ).toFixed(2); 
+
+        return price
+    } else if(personCategory == PERSON_CATEGORIES[1].name) {
+      const price = (
+        CALCULATION_CONSTANTS.FOUR_TO_SEVEN_BASE +
+        CALCULATION_CONSTANTS.PER_KM_FOUR_TO_SEVEN * km +
+        CALCULATION_CONSTANTS.PER_MIN_FOUR_TO_SEVEN * min
+    ).toFixed(2);
+    return price
+}
+        
 }
 
 /**
@@ -89,9 +95,29 @@ export const FareCalculateValidation = (startInput, endInput, categorySelect, bu
     const endIsValid = validateAddress(endInput);
     if (categorySelect.text != null && startIsValid && endIsValid) {
       if (startInput != endInput) {
-        document
-          .getElementById(buttonElementName)
-          .classList.remove("is-static");
+        document.getElementById(buttonElementName).classList.remove("is-static");
+      } else if (startInput == endInput) {
+        Toast.open({
+          message: "gegeven addressen zijn hetzelfde",
+          type: "is-danger",
+        });
+      }
+    } else {
+      document.getElementById(buttonElementName).classList.add("is-static");
+    }
+  }
+/**
+ * 
+ * @param {*} startInput 
+ * @param {*} endInput 
+ * @param {*} buttonElementName 
+ */
+export const FareCalculateValidationEdit = (startInput, endInput, buttonElementName) => {
+    const startIsValid = validateAddress(startInput);
+    const endIsValid = validateAddress(endInput);
+    if (startIsValid && endIsValid) {
+      if (startInput != endInput) {
+        document.getElementById(buttonElementName).classList.remove("is-static");
       } else if (startInput == endInput) {
         Toast.open({
           message: "gegeven addressen zijn hetzelfde",
