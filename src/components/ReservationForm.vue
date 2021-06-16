@@ -13,13 +13,11 @@
                   icon="calendar-today"
                   :locale="locale"
                   editable
-                  
                 >
                 </b-datepicker>
               </b-field>
               <b-field label="Kies een tijd">
                 <b-timepicker
-                  
                   placeholder="klik om te selecteren"
                   icon="clock"
                   :time-formatter="TimeFormatter"
@@ -28,7 +26,6 @@
                   :hour-format="hourFormat"
                   :incrementMinutes="minutesGranularity"
                   locale="en-GB"
-                  
                 >
                 </b-timepicker>
               </b-field>
@@ -61,38 +58,36 @@ export default {
       distanceS: sessionStorage.getItem("distance"),
       traveltimeS: sessionStorage.getItem("traveltime"),
       farePrice: this.CryptoJS.AES.decrypt(
-          sessionStorage.getItem("farePrice"),
-          DecryptKey
-        ).toString(this.CryptoJS.enc.Utf8),
+        sessionStorage.getItem("farePrice"),
+        DecryptKey
+      ).toString(this.CryptoJS.enc.Utf8),
       ReservationDate: null,
       Reservationtime: null,
       ReservationNumber: null,
       userID: null,
-      hourFormat: '24' ,
+      hourFormat: "24",
       locale: "en-US", // Browser locale
       minutesGranularity: 5,
       disabledDates: [],
-      disabledTimes: []
+      disabledTimes: [],
     };
   },
   methods: {
     DateFormatter(date) {
-      this.ReservationDate = date.toLocaleDateString('en-US')
+      this.ReservationDate = date.toLocaleDateString("en-US");
 
-      return date.toLocaleDateString('en-GB')
+      return date.toLocaleDateString("en-GB");
     },
     TimeFormatter(time) {
-      this.Reservationtime = time
-      return time.toLocaleTimeString('en-GB');
+      this.Reservationtime = time;
+      return time.toLocaleTimeString("en-GB");
     },
     Payment() {
-
       sessionStorage.setItem("pickup_date", this.ReservationDate);
-      
-        Reservation.Payment((this.farePrice).toString()).then((response) => {
-          window.open(response.data, "_self");
-        });
-      
+
+      Reservation.Payment(this.farePrice.toString()).then((response) => {
+        window.open(response.data, "_self");
+      });
     },
   },
   mounted() {
@@ -100,16 +95,14 @@ export default {
       this.userID = response.data.id;
     });
 
-     Reservation.getAllReservations()
-     .then(response => {
-       for (const key in response.data) {
-         console.log(key)
-         console.log(response.data[key].pickup_date)
-          this.disabledDates.push(new Date(response.data[key].pickup_date))
-          this.disabledTimes.push(new Date());
-       }
-
-     })
+    Reservation.getAllReservations().then((response) => {
+      for (const key in response.data) {
+        console.log(key);
+        console.log(response.data[key].pickup_date);
+        this.disabledDates.push(new Date(response.data[key].pickup_date));
+        this.disabledTimes.push(new Date());
+      }
+    });
   },
 };
 </script>

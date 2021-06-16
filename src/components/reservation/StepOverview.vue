@@ -14,7 +14,7 @@
                 :loading="isFetchingStart"
                 @input="getAsyncDataStart"
                 @select="assignTagStart($event)"
-                :disabled="inputIsDisabled"
+                :disabled="!nextIsDisabled"
               >
                 <template slot-scope="props">
                   <div class="media">
@@ -104,7 +104,7 @@
                 :loading="isFetchingEnd"
                 @input="getAsyncDataEnd"
                 @select="assignTagEnd($event)"
-                :disabled="inputIsDisabled"
+                :disabled="!nextIsDisabled"
               >
                 <template slot-scope="props">
                   <div class="media">
@@ -183,7 +183,7 @@
               </b-autocomplete>
             </b-field>
           </div>
-          <div v-if="!inputIsDisabled" class="buttons">
+          <div v-if="nextIsDisabled" class="buttons">
             <button
               id="recalculate-fare"
               class="button is-danger has-text-centered"
@@ -200,7 +200,7 @@
             </button>
           </div>
           <button
-            v-if="inputIsDisabled"
+            v-if="!nextIsDisabled"
             id="cancel-edit-fare"
             class="button is-danger has-text-centered"
             @click="editFare()"
@@ -224,18 +224,8 @@
           </div>
         </div>
       </div>
-
     </div>
-          <div id="step-overview-next">
-        <button
-          :disabled="!inputIsDisabled"
-          id="next-step"
-          class="button is-danger has-text-centered"
-          @click="nextStep()"
-        >
-          Volgende Stap
-        </button>
-      </div>
+
     <b-loading
       :is-full-page="true"
       v-model="isLoading"
@@ -277,7 +267,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("CurrentReservation", ["reservation"]),
+    ...mapGetters("CurrentReservation", ["reservation","nextIsDisabled" ]),
     ...mapGetters(["authenticated"]),
   },
 
@@ -298,22 +288,17 @@ export default {
     ).reservation.EndObject;
   },
   methods: {
-    ...mapActions("CurrentReservation", ["pushReservation", "progressStep"]),
+    ...mapActions("CurrentReservation", [
+      "pushReservation",
+      "progressStep",
+      "disableNextButton",
+      "enableNextButton",
+    ]),
     editFare() {
-      this.inputIsDisabled = false;
-    },
-    nextStep() {
-      if (this.authenticated) {
-        this.progressStep();
-      } else {
-        this.$router.push({
-          name: "Login",
-          query: { redirect: this.$route.name },
-        });
-      }
+      this.disableNextButton()
     },
     cancelEditFare() {
-      this.inputIsDisabled = true;
+      this.enableNextButton()
 
       this.StartInput = JSON.parse(
         JSON.stringify(this.reservation)
@@ -351,7 +336,7 @@ export default {
         })
         .then(() => {
           this.isLoading = false;
-          this.inputIsDisabled = true;
+          this.enableNextButton()
         });
     },
     assignTagStart(slot) {

@@ -31,29 +31,81 @@
         </b-input>
       </b-field>
     </div>
-          <div id="step-overview-next">
-        <button
-          :disabled="!inputIsDisabled"
-          id="next-step"
-          class="button is-danger has-text-centered"
-          @click="nextStep()"
-        >
-          Volgende Stap
-        </button>
-      </div>
   </div>
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
+
 export default {
   data() {
     return {
       selectedDate: null,
       selectedTime: null,
+      phoneNumber: "",
       locale: "en-GB",
       hourFormat: undefined,
       enableSeconds: false,
+      inputIsDisabled: true,
     };
+  },
+  mounted() {
+    
+    this.checkForm();
+  },
+  methods: {
+    ...mapActions("CurrentReservation", [
+      "pushReservation",
+      "progressStep",
+      "pushUserDetails",
+      "enableNextButton",
+      "disableNextButton",
+    ]),
+    checkForm() {
+      const phoneRegexp = /^((\+|00)?31|0(?!0))(\d{9})$/;
+
+      if (
+        this.userDetails.date === null ||
+        this.userDetails.time === null ||
+        phoneRegexp.test(this.userDetails.phonenumber) === false ||
+        this.userDetails.phonenumber == ""
+      ) {
+
+        this.disableNextButton();
+      }
+
+      if (
+        this.userDetails.date !== null &&
+        this.userDetails.time !== null &&
+        phoneRegexp.test(this.userDetails.phonenumber)
+      ) {
+        console.log('enable');
+        this.enableNextButton();
+      }
+    },
+  },
+  watch: {
+    selectedDate: function (val) {
+      this.pushUserDetails({ ...this.userDetails, date: val });
+      this.checkForm();
+    },
+    selectedTime: function (val) {
+      this.pushUserDetails({ ...this.userDetails, time: val });
+      this.checkForm();
+    },
+    phoneNumber: function (val) {
+      const phoneRegexp = /^((\+|00)?31|0(?!0))(\d{9})$/;
+
+      if (phoneRegexp.test(val)) {
+        this.pushUserDetails({ ...this.userDetails, phonenumber: val });
+      }
+
+      this.checkForm();
+    },
+  },
+  computed: {
+    ...mapGetters("CurrentReservation", ["userDetails"]),
+    ...mapGetters(["authenticated"]),
   },
 };
 </script>
