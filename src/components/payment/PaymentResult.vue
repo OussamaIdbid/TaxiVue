@@ -66,7 +66,7 @@
 <script>
 import Reservation from "../../Api/Reservation";
 import User from "../../Api/User";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "PaymentResult",
@@ -112,11 +112,13 @@ export default {
             console.log(response.data);
             if (response.data.status == "paid") {
               this.CreateReservation(this.userID);
+              this.resetOrder();
               this.IsPaid = true;
             } else if (response.data.status == "canceled") {
               this.$router.push({ name: "FareCalculationResult" });
             } else if (response.data.status == "expired") {
               this.$router.push({ name: "PaymentExpired" });
+              this.resetOrder();
             } else if (response.data.status == "failed") {
               this.$buefy.toast.open({
                 message: "Betaling mislukt. Probeer het opnieuw",
@@ -128,11 +130,13 @@ export default {
         }
       });
   },
-
+  beforeDestroy() {},
   computed: {
     ...mapGetters("CurrentReservation", ["reservation"]),
   },
   methods: {
+    ...mapActions("CurrentReservation", ["resetOrder"]),
+
     CreateReservation(userID) {
       Reservation.createReservation({
         start_address: this.reservation.reservation.StartObject.place_name,

@@ -41,6 +41,10 @@ const actions = {
     commit("setUserDetails", userDetails);
   },
 
+  resetOrder({ commit }) {
+    commit("resetOrder");
+  },
+
   progressStep({ commit }) {
     commit("incrementStep");
   },
@@ -66,7 +70,18 @@ const actions = {
 const mutations = {
   setReservation: (state, reservation) => (state.reservation = reservation),
   setUserDetails: (state, userDetails) => (state.userDetails = userDetails),
+  resetOrder: (state) => {
+    state.reservation = [];
 
+    state.userDetails.date = null;
+    state.userDetails.time = null;
+    state.userDetails.phonenumber = "";
+
+    state.nextIsDisabled = false;
+    state.previousIsVisible = false;
+    state.nextIsVisible = true;
+    state.currentStep = 0;
+  },
   incrementStep: (state) => {
     state.currentStep++;
 
