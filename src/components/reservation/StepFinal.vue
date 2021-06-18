@@ -53,16 +53,20 @@
       </b-field>
     </div>
 
-    <div>
-    Total: €{{reservation.reservation.farePrice}}
-    </div>
-
+    <div>Total: €{{ reservation.reservation.farePrice }}</div>
+    <button
+      id="cancel-edit-fare"
+      class="button is-danger has-text-centered"
+      @click="handlePayment()"
+    >
+      Naar Betalen
+    </button>
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-
+import Reservation from './../../Api/Reservation'
 export default {
   computed: {
     ...mapGetters("CurrentReservation", ["reservation", "userDetails"]),
@@ -86,7 +90,14 @@ export default {
 
     this.date = new Date(this.reservation.userDetails.date);
   },
-  methods: {},
+  methods: {
+    handlePayment() {
+      console.log(this.reservation.reservation.farePrice);
+      Reservation.Payment(this.reservation.reservation.farePrice).then((response) => {
+        window.open(response.data, "_self");
+      });
+    },
+  },
 };
 </script>
 
