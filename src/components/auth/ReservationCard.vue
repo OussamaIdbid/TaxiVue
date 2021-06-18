@@ -54,7 +54,7 @@
     <b-modal
       v-model="isComponentModalActive"
       trap-focus
-      full-screen
+      
       :destroy-on-hide="true"
       aria-role="dialog"
       aria-modal
