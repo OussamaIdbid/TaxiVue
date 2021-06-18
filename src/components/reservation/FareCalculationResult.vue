@@ -9,12 +9,17 @@
         <MapBoxMap />
       </div>
     </div>
+    <b-button
+      label="Launch snackbar (with cancel)"
+      size="is-medium"
+      @click="hasCancel"
+    />
   </section>
 </template>
 
 <script>
 //import { DecryptKey } from "../../constants/keys";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import MapBoxMap from "../MapBox/MapBoxMap.vue";
 import ReservationSteps from "./ReservationSteps.vue";
 //import CryptoJS from 'crypto-js'
@@ -25,54 +30,68 @@ export default {
   },
   data() {
     return {
-      startObject: '',
-      endObject: '',
-      routeObject: '',
-      distance: '',
-      traveltime: '',
-      farePrice: '',
-      amountOfPeople: '',
+      startObject: "",
+      endObject: "",
+      routeObject: "",
+      distance: "",
+      traveltime: "",
+      farePrice: "",
+      amountOfPeople: "",
       ReservationActive: false,
-
     };
   },
   computed: {
     ...mapGetters(["authenticated"]),
-    ...mapGetters('CurrentReservation', ["reservation"])
+    ...mapGetters("CurrentReservation", ["reservation"]),
   },
   methods: {
+    ...mapActions("CurrentReservation", ["resetOrder"]),
     backToHome() {
       this.$router.push({ name: "Home" });
       // localStorage.removeItem("calculated", false)
     },
     ToReservation() {
-      if (!this.authenticated) {
-        this.$router.push({
-          name: "Login",
-          query: { redirect: this.$route.name },
-        });
-      } else {
-        this.ReservationActive = true;
-
-      }
+      this.$router.push({
+        name: "Login",
+        query: { redirect: this.$route.name },
+      });
     },
-    
+  },
+  beforeRouteLeave: function (to, from, next) {
+    if (this.authenticated) {
+      this.$buefy.snackbar.open({
+        indefinite: true,
+        type: "is-danger",
+        actionText: "Ja",
+        position: "is-top",
+        message: "Weet je zeker dat je je reservering wilt annuleren?",
+        cancelText: "Nee",
+        onAction: () => {
+          this.resetOrder();
+          next();
+        },
+      });
+    } else if (!this.authenticated) {
+      localStorage.setItem("calculated", false);
+      next();
+    } else if (!localStorage.getItem("calculated")) {
+      next();
+    }
   },
   mounted() {
-
-    if (!sessionStorage.getItem("calculated")) {
-      this.$router.push({ name: "Home" });
-      sessionStorage.removeItem("map_url");
-      sessionStorage.removeItem("startAddress");
-      sessionStorage.removeItem("endAddress");
-      sessionStorage.removeItem("distance");
-      sessionStorage.removeItem("traveltime");
-      sessionStorage.removeItem("farePrice");
-      sessionStorage.removeItem("map_url");
+    // console.log(localStorage.getItem("calculated"));
+    // if (!this.authenticated) {
+    //   this.ToReservation();
+    // }
+    console.log('heheh');
+    if (localStorage.getItem("calculated") === false) {
+      console.log("hehheh");
+      // this.$router.push({ name: "Home" });
     } else {
-      setTimeout( () => {
+      console.log('fdfdf');
+      setTimeout(() => {
         document.getElementById("loader").classList.remove("is-active");
-        localStorage.removeItem("calculated", false);
+        localStorage.setItem("calculated", true);
       }, 3000);
 
       window.scrollTo(0, 0);
