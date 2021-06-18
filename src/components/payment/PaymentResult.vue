@@ -7,9 +7,6 @@
     >
       <div class="container">
         <div class="columns is-centered" id="column-container">
-          <div class="column is-half is-centered">
-            <img id="map-img" :src="map_url" />
-          </div>
           <div class="column is-one-third is-centered">
             <div
               id="results-tile"
@@ -32,7 +29,7 @@
                   <div id="details-wrapper">
                     <div id="km-container">
                       <p class="text">Afstand:</p>
-                      <p class="amount">{{ distance }}km</p>
+                      <p class="amount">{{ distance }}</p>
                     </div>
                     <div id="min-container">
                       <p class="text">Reistijd:</p>
@@ -69,7 +66,7 @@
 <script>
 import Reservation from "../../Api/Reservation";
 import User from "../../Api/User";
-import { DecryptKey } from "../../constants/keys";
+import { mapGetters } from "vuex";
 
 export default {
   name: "PaymentResult",
@@ -92,7 +89,6 @@ export default {
       travelTime: null,
       ReservationDate: null,
       farePrice: null,
-      map_url: null,
       isLoading: true,
     };
   },
@@ -120,48 +116,44 @@ export default {
             } else if (response.data.status == "canceled") {
               this.$router.push({ name: "FareCalculationResult" });
             } else if (response.data.status == "expired") {
-              //create error page that says payment has expired and payment didnt go through
-              console.log("payment expired");
+              this.$router.push({ name: "PaymentExpired" });
             } else if (response.data.status == "failed") {
-              //create error page that says payment has failed and redirect to fare result page
-              console.log("payment failed");
+              this.$buefy.toast.open({
+                message: "Betaling mislukt. Probeer het opnieuw",
+                type: "is-danger",
+              });
+              this.$router.push({ name: "FareCalculationResult" });
             }
           });
         }
       });
   },
+
+  computed: {
+    ...mapGetters("CurrentReservation", ["reservation"]),
+  },
   methods: {
     CreateReservation(userID) {
       Reservation.createReservation({
-        start_address: this.CryptoJS.AES.decrypt(
-          sessionStorage.getItem("startAddress"),
-          DecryptKey
-        ).toString(this.CryptoJS.enc.Utf8),
+        start_address: this.reservation.reservation.StartObject.place_name,
 
-        end_address: this.CryptoJS.AES.decrypt(
-          sessionStorage.getItem("endAddress"),
-          DecryptKey
-        ).toString(this.CryptoJS.enc.Utf8),
+        end_address: this.reservation.reservation.EndObject.place_name,
 
-        start_address_geo: this.CryptoJS.AES.decrypt(
-          sessionStorage.getItem("startAddressGeo"),
-          DecryptKey
-        ).toString(this.CryptoJS.enc.Utf8),
+        start_address_geo:
+          this.reservation.reservation.StartObject.geometry.coordinates[1] +
+          ", " +
+          this.reservation.reservation.StartObject.geometry.coordinates[0],
 
-        end_address_geo: this.CryptoJS.AES.decrypt(
-          sessionStorage.getItem("endAddressGeo"),
-          DecryptKey
-        ).toString(this.CryptoJS.enc.Utf8),
+        end_address_geo:
+          this.reservation.reservation.EndObject.geometry.coordinates[1] +
+          ", " +
+          this.reservation.reservation.EndObject.geometry.coordinates[0],
 
-        amount_of_people: sessionStorage.getItem("amountOfPeople"),
-        pickup_date: sessionStorage.getItem("pickup_date"),
-        fare_price: this.CryptoJS.AES.decrypt(
-          sessionStorage.getItem("farePrice"),
-          DecryptKey
-        ).toString(this.CryptoJS.enc.Utf8),
-        distance: sessionStorage.getItem("distance"),
-        travel_time: sessionStorage.getItem("traveltime"),
-        map_url: sessionStorage.getItem("map_url"),
+        amount_of_people: this.reservation.reservation.amountOfPeople,
+        pickup_date: this.reservation.userDetails.date,
+        fare_price: this.reservation.reservation.farePrice,
+        distance: this.reservation.reservation.distance,
+        travel_time: this.reservation.reservation.travelTime,
         order_id: this.$route.query.orderID,
         payment_id: this.$route.query.paymentID,
         status: "Closed",
@@ -176,7 +168,6 @@ export default {
         this.travelTime = response.data.travel_time;
         this.farePrice = response.data.fare_price;
         this.ReservationDate = response.data.pickup_date;
-        this.map_url = response.data.map_url;
 
         Reservation.getWebhook({
           id: response.data.payment_id,
