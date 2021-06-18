@@ -50,7 +50,10 @@ export default {
     };
   },
   mounted() {
-    
+    this.phoneNumber = this.reservation.userDetails.phonenumber;
+    this.selectedTime = new Date(this.reservation.userDetails.time);
+
+    this.selectedDate = new Date(this.reservation.userDetails.date);
     this.checkForm();
   },
   methods: {
@@ -65,21 +68,17 @@ export default {
       const phoneRegexp = /^((\+|00)?31|0(?!0))(\d{9})$/;
 
       if (
-        this.userDetails.date === null ||
-        this.userDetails.time === null ||
-        phoneRegexp.test(this.userDetails.phonenumber) === false ||
-        this.userDetails.phonenumber == ""
+        this.selectedDate === null ||
+        this.selectedTimee === null ||
+        phoneRegexp.test(this.phoneNumber) === false ||
+        this.phoneNumber == ""
       ) {
-
         this.disableNextButton();
-      }
-
-      if (
-        this.userDetails.date !== null &&
-        this.userDetails.time !== null &&
-        phoneRegexp.test(this.userDetails.phonenumber)
+      } else if (
+        this.selectedDate !== null &&
+        this.selectedTime !== null &&
+        phoneRegexp.test(this.phoneNumber)
       ) {
-        console.log('enable');
         this.enableNextButton();
       }
     },
@@ -94,17 +93,13 @@ export default {
       this.checkForm();
     },
     phoneNumber: function (val) {
-      const phoneRegexp = /^((\+|00)?31|0(?!0))(\d{9})$/;
-
-      if (phoneRegexp.test(val)) {
-        this.pushUserDetails({ ...this.userDetails, phonenumber: val });
-      }
+      this.pushUserDetails({ ...this.userDetails, phonenumber: val });
 
       this.checkForm();
     },
   },
   computed: {
-    ...mapGetters("CurrentReservation", ["userDetails"]),
+    ...mapGetters("CurrentReservation", ["reservation","userDetails"]),
     ...mapGetters(["authenticated"]),
   },
 };

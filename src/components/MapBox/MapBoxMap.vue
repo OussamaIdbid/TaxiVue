@@ -1,5 +1,6 @@
 <template>
   <MglMap :accessToken="token" :mapStyle="mapStyle" :center="coordinates">
+
   </MglMap>
 </template>
 
@@ -12,27 +13,34 @@ export default {
   name: "MapBoxMap",
   components: {
     MglMap,
-    
-
+    // MglPopup,
+    // MglMarker,
+    // MglGeojsonLayer,
   },
   data() {
     return {
       map: null,
       token: MapBoxKey,
+      mapbox: null,
       RouteObject: [],
       StartObject: [],
       EndObject: [],
       mapStyle: "mapbox://styles/mapbox/streets-v11",
       coordinates: [-111.549668, 39.014],
       // geoJsonSource: {
+      //   id: 1,
       //   type: "Feature",
       //   properties: {},
-      //   geometry: {
-      //     type: "LineString",
-      //     coordinates: this.RouteObject.routes[0].geometry.coordinates,
-      //   },
+      //   geometry: [
+      //     {
+      //       type: "LineString",
+      //       coordinates: JSON.parse(JSON.stringify(this.reservation))
+      //         .reservation.routeObject.routes[0].geometry.coordinates,
+      //     },
+      //   ],
       // },
       // geoJsonLayer: {},
+
       // Coords: {
       //   startCoords:
       //     this.StartObject.geometry.coordinates[1] +
@@ -47,19 +55,22 @@ export default {
   },
   created() {
     this.mapbox = MapBox;
+    
   },
   mounted() {
-    this.RouteObject = JSON.parse(
-      JSON.stringify(this.reservation)
-    ).reservation.routeObject;
-    this.StartObject = JSON.parse(
-      JSON.stringify(this.reservation)
-    ).reservation.StartObject;
-    this.EndObject = JSON.parse(
-      JSON.stringify(this.reservation)
-    ).reservation.EndObject;
-    // mapboxgl.accessToken = MapBoxKey;
-    // this.map = new mapboxgl.Map({
+
+    // this.RouteObject = JSON.parse(
+    //   JSON.stringify(this.reservation)
+    // ).reservation.routeObject;
+    // this.StartObject = JSON.parse(
+    //   JSON.stringify(this.reservation)
+    // ).reservation.StartObject;
+    // this.EndObject = JSON.parse(
+    //   JSON.stringify(this.reservation)
+    // ).reservation.EndObject;
+
+    // this.mapbox.accessToken = MapBoxKey;
+    // this.map = new this.mapbox.Map({
     //   container: "map", // container ID
     //   // style URL
     //   style: "mapbox://styles/mapbox/streets-v11",
@@ -184,7 +195,8 @@ export default {
   width: 750px;
   height: 750px;
 }
-.mgl-map-wrapper, .mapboxgl-map {
+.mgl-map-wrapper,
+.mapboxgl-map {
   border-radius: 10px;
 }
 /*Mobile breakpoints*/

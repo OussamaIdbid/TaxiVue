@@ -18,12 +18,16 @@
       label="Overzicht"
       step="3"
       :clickable="isClickable"
-    ></b-step-item>
+    >
+    <StepFinal />
+    </b-step-item>
     <div id="step-overview-next">
       <button
         :disabled="previousIsDisabled"
         id="next-step"
-        v-bind:style="{ display: previousIsVisible === true ? 'block' : 'none' }"
+        v-bind:style="{
+          display: previousIsVisible === true ? 'block' : 'none',
+        }"
         class="button is-danger has-text-centered"
         @click="previousStep()"
       >
@@ -48,11 +52,13 @@
 import { mapActions, mapGetters } from "vuex";
 import StepOverview from "./../reservation/StepOverview.vue";
 import StepDetails from "./../reservation/StepDetails.vue";
+import StepFinal from "./../reservation/StepFinal.vue"
 
 export default {
   components: {
     StepOverview,
     StepDetails,
+    StepFinal
   },
   computed: {
     ...mapGetters("CurrentReservation", [
@@ -60,6 +66,7 @@ export default {
       "nextIsDisabled",
       "previousIsVisible",
       "nextIsVisible",
+      "reservation"
     ]),
   },
   data() {
@@ -70,32 +77,24 @@ export default {
       isClickable: false,
     };
   },
-  mounted() {},
+  mounted() {
+    this.checkStepStatus()
+  },
   methods: {
-    ...mapActions("CurrentReservation", [
-      "progressStep",
-      "decreaseStep",
-      "disableNextButton",
-      "enableNextButton",
-      "changePreviousVisibility",
-      "changeNextVisibility",
-    ]),
+    ...mapActions("CurrentReservation", ["progressStep", "decreaseStep", "checkStepStatus"]),
     nextStep() {
       this.progressStep();
-      this.disableNextButton();
-      this.changePreviousVisibility();
-      this.changeNextVisibility();
     },
     previousStep() {
       this.decreaseStep();
-      this.enableNextButton();
-      this.changePreviousVisibility();
-      this.changeNextVisibility();
-
-      
     },
   },
 };
 </script>
 
-<style></style>
+<style>
+#step-overview-next {
+  display: flex;
+  justify-content: space-between;
+}
+</style>
