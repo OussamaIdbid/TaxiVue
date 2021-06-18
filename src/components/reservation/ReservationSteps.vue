@@ -14,12 +14,8 @@
     <b-step-item label="Reis Details" step="2" :clickable="isClickable">
       <StepDetails />
     </b-step-item>
-    <b-step-item
-      label="Overzicht"
-      step="3"
-      :clickable="isClickable"
-    >
-    <StepFinal />
+    <b-step-item label="Overzicht" step="3" :clickable="isClickable">
+      <StepFinal />
     </b-step-item>
     <div id="step-overview-next">
       <button
@@ -52,13 +48,13 @@
 import { mapActions, mapGetters } from "vuex";
 import StepOverview from "./../reservation/StepOverview.vue";
 import StepDetails from "./../reservation/StepDetails.vue";
-import StepFinal from "./../reservation/StepFinal.vue"
+import StepFinal from "./../reservation/StepFinal.vue";
 
 export default {
   components: {
     StepOverview,
     StepDetails,
-    StepFinal
+    StepFinal,
   },
   computed: {
     ...mapGetters("CurrentReservation", [
@@ -66,7 +62,7 @@ export default {
       "nextIsDisabled",
       "previousIsVisible",
       "nextIsVisible",
-      "reservation"
+      "reservation",
     ]),
   },
   data() {
@@ -78,10 +74,14 @@ export default {
     };
   },
   mounted() {
-    this.checkStepStatus()
+    this.checkStepStatus();
   },
   methods: {
-    ...mapActions("CurrentReservation", ["progressStep", "decreaseStep", "checkStepStatus"]),
+    ...mapActions("CurrentReservation", [
+      "progressStep",
+      "decreaseStep",
+      "checkStepStatus",
+    ]),
     nextStep() {
       this.progressStep();
     },
