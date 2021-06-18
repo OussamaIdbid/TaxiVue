@@ -232,7 +232,7 @@ import {
   SEARCH_API_BASE
 } from "../../constants/mapBox/BaseRequests";
 import { getRoute, calculateTaxiFare, timeConvertToString, FareCalculateValidation} from "./../../functions/reservationCalculation";
-import { mapActions } from "vuex";
+import { mapActions,mapGetters } from "vuex";
 export default {
   name: "FareCalculation",
   data() {
@@ -262,10 +262,13 @@ export default {
 
   },
   mounted() {
-    localStorage.setItem("calculated", false);
   },
+  computed: {
+    ...mapGetters("CurrentReservation", ["reservation"]),
+  },
+
   methods: {
-    ...mapActions('CurrentReservation', ['pushReservation']),
+    ...mapActions('CurrentReservation', ['pushReservation','setCalculatedTrue']),
     processForm() {
       document.getElementById("loader").classList.add("is-active");
       getRoute(this.selectedStart, this.selectedEnd).then((response) => {
@@ -288,7 +291,7 @@ export default {
           distance: distanceInKmString
         })
 
-        sessionStorage.setItem("calculated", true);
+        this.setCalculatedTrue()
       })
       .then(this.$router.push({name: "FareCalculationResult"})
       )
