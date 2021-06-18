@@ -47,8 +47,8 @@ const actions = {
   decreaseStep({ commit }) {
     commit("decrementStep");
   },
-  checkStepStatus({commit}) {
-    commit("checkStepStatus")
+  checkStepStatus({ commit }) {
+    commit("checkStepStatus");
   },
   enableNextButton({ commit }) {
     commit("enableButton");
@@ -108,9 +108,6 @@ const handleStep = (state) => {
       state.previousIsVisible = true;
       state.nextIsVisible = true;
 
-      console.log(state.userDetails.date);
-      console.log(state.userDetails.time);
-      console.log(state.userDetails.phonenumber);
       if (
         state.userDetails.date === null ||
         state.userDetails.time === null ||
