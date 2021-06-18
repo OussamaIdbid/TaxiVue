@@ -1,78 +1,73 @@
 <template>
-  <div class='container' v-if="!isLoading" style="position: relative">
-    <!-- <section class="section is-family-primary" id="section-results"> -->
+  <div class="container" v-if="!isLoading" style="position: relative">
     <div class="box">
-      
-    </div>
-
-
-      <!-- <div class="columns is-centered" id="column-container">
-      <div class="column is-half is-centered">
-              <HereMap
-        :center="center"
-        :startLocation="this.startAddressGeo"
-        :endLocation="this.endAddressGeo"
-        :startAddress="this.startAddressS"
-        :endAddress="this.endAddressS"
-      />
-          <img id="map-img" :src="map_urlS" />
-        </div>
-        <div class="column is-one-third is-centered">
-          <div
-            id="results-tile"
-            class="tile is-parent has-background-white rounded-container"
-          >
-            <div class="content">
-              <p class="title is-size-6">Overzicht</p>
-
-              <div class="content">
-                <div id="route-wrapper">
-                  <div id="start-address-container">
-                    <p id="start-address-text">Van:</p>
-                    <p id="start-address">{{ startAddressS }}</p>
-                  </div>
-                  <div id="end-address-container">
-                    <p id="end-address-text">Naar:</p>
-                    <p id="end-address">{{ endAddressS }}</p>
-                  </div>
-                </div>
-                <div id="details-wrapper">
-                  <div id="km-container">
-                    <p class="text">Afstand:</p>
-                    <p class="amount">{{ distanceS }}km</p>
-                  </div>
-                  <div id="min-container">
-                    <p class="text">Reistijd:</p>
-                    <p class="amount">{{ traveltimeS }}</p>
-                  </div>
-                </div>
-                <div class="details-container">
-                  <p class="text">Datum:</p>
-                  <p class="amount">{{ ReservationDate }}</p>
-                </div>
-                <div class="details-container">
-                  <p class="text">Ritprijs:</p>
-                  <p class="amount">€{{ farePriceS }}</p>
-                </div>
-                <div class="details-container">
-                  <p class="text">Betaalmethode:</p>
-                  <p class="amount">{{ paymentMethod }}</p>
-                </div>
-
-                <button @click="refundPayment()">Refund</button>
-              </div>
-            </div>
-          </div>
+      <div class="column-info">
+        <span class="material-icons"> tag </span>
+        <div v-if="!isLoading" class="info-end-wrapper">
+          <p class="label">Reserveringsnummer</p>
+          <p class="info-end">#{{ orderNumber }}</p>
         </div>
       </div>
-    </div> -->
+      <div class="is-divider" data-content=""></div>
+
+      <div class="column-info">
+        <span class="material-icons"> fiber_manual_record </span>
+        <div v-if="!isLoading" class="info-start-wrapper">
+          <p class="label">Vertrekpunt</p>
+          <p class="info-start">{{ startAddress }}</p>
+        </div>
+      </div>
+      <div class="column-info">
+        <span class="material-icons"> location_on </span>
+        <div v-if="!isLoading" class="info-end-wrapper">
+          <p class="label">Eindbestemming</p>
+          <p class="info-end">{{ endAddress }}</p>
+        </div>
+      </div>
+      <div class="is-divider" data-content=""></div>
+      <div class="column-info">
+        <span class="material-icons"> insert_invitation </span>
+        <div v-if="!isLoading" class="info-end-wrapper">
+          <p class="label">Datum</p>
+          <p class="info-end">{{ ReservationDate }}</p>
+        </div>
+      </div>
+      <div class="column-info">
+        <span class="material-icons"> moving </span>
+        <div v-if="!isLoading" class="info-end-wrapper">
+          <p class="label">Afstand</p>
+          <p class="info-end">{{ distance }}</p>
+        </div>
+      </div>
+      <div class="column-info">
+        <span class="material-icons"> schedule </span>
+        <div v-if="!isLoading" class="info-end-wrapper">
+          <p class="label">Reistijd</p>
+          <p class="info-end">{{ travelTime }}</p>
+        </div>
+      </div>
+      <div class="is-divider" data-content=""></div>
+
+      <div class="column-info">
+        <span class="material-icons"> payments </span>
+        <div v-if="!isLoading" class="info-end-wrapper">
+          <p class="label">Betaalmethode</p>
+          <p class="info-end">{{ paymentMethod }}</p>
+        </div>
+      </div>
+      <div class="column-info">
+        <span class="material-icons"> euro </span>
+        <div v-if="!isLoading" class="info-end-wrapper">
+          <p class="label">Prijs</p>
+          <p class="info-end">€{{ farePrice }}</p>
+        </div>
+      </div>
+    </div>
     <b-loading
       :is-full-page="true"
       v-model="isLoading"
       :can-cancel="true"
     ></b-loading>
-  
-  <!-- </section> -->
   </div>
 </template>
 
@@ -90,23 +85,32 @@ export default {
       startAddress: "",
       endAddress: "",
       distance: 0,
-      traveltime: 0,
+      travelTime: 0,
       ReservationDate: "",
       farePrice: 0,
       paymentID: "",
       paymentMethod: "",
       isLoading: true,
       data: null,
+      orderNumber: "",
     };
   },
   mounted() {
     Reservation.getReservation(this.OrderID).then((response) => {
+      const filteredStartAddress = response.data.start_address.replace(
+        ", Nederland",
+        ""
+      );
+      const filteredEndAddress = response.data.end_address.replace(
+        ", Nederland",
+        ""
+      );
       console.log(response.data);
       this.data = response.data;
-      this.startAddress = response.data.start_address;
-      this.endAddress = response.data.end_address;
+      this.startAddress = filteredStartAddress;
+      this.endAddress = filteredEndAddress;
       this.distance = response.data.distance;
-      this.traveltime = response.data.travel_time;
+      this.travelTime = response.data.travel_time;
       this.ReservationDate = moment(response.data.pickup_date).format(
         "D MMMM YYYY"
       );
@@ -114,6 +118,7 @@ export default {
       this.paymentID = response.data.payment_id;
       this.startAddressGeo = response.data.start_address_geo;
       this.endAddressGeo = response.data.end_address_geo;
+      this.orderNumber = response.data.order_id;
 
       Reservation.getWebhook({ id: response.data.payment_id }).then(
         (response) => {
@@ -145,88 +150,28 @@ export default {
 </script>
 
 <style scoped>
-#column-container {
-  flex-direction: row;
-}
-#order-info {
-  position: absolute;
-  flex-direction: column;
-  align-items: flex-end;
-  pointer-events: none;
-  z-index: 3;
+.column-info {
+  display: flex;
+  margin-bottom: 1rem;
 }
 .column {
   pointer-events: all;
 }
-#results-tile {
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
-    0 0 0 1px rgba(10, 10, 10, 0.02);
+.container {
+  width: max-content;
 }
-#km-text,
-#min-text,
-.text,
+.box {
+  padding: 3rem;
+}
 .label {
-  font-size: small;
+  font-size: large;
   margin-bottom: 0;
-  align-self: center;
-  margin: 0;
-  color: grey;
 }
-#start-address,
-#end-address {
-  font-size: small;
-}
-#start-address-text,
-#end-address-text {
-  font-size: small;
-  margin-bottom: 0;
-  color: grey;
-}
-
-#min-amount,
-#km-amount,
-#fare-amount,
-.amount,
-.info {
-  width: 100%;
-  /*text-align: end;*/
-  font-weight: bold;
-  font-size: small;
-}
-#details-wrapper > div {
-  display: flex;
-}
-#details-wrapper,
-#route-wrapper {
-  margin-bottom: 1rem;
-}
-#details-wrapper {
-  margin-bottom: 0.3rem;
-  border-bottom-style: groove;
-  border-bottom-width: 1px;
-}
-.details-container {
-  display: flex;
-}
-.rounded-container {
-  border-radius: 20px;
+.header {
+  font-size: smaller;
 }
 .material-icons {
   color: #f14668 !important;
+  margin-right: 1rem;
 }
-#order-route {
-  position: absolute;
-  z-index: 3;
-}
-#order-route-card {
-  margin-top: 1rem;
-  margin-left: 1rem;
-  border-radius: 1rem;
-}
-/**#map {
-  width: 500px;
-  height: 500px;
-}*/
 </style>
