@@ -1,77 +1,12 @@
 <template>
-  <div>
-    <section class="section is-family-primary" id="section-results">
-    <div v-if="!isLoading" style="position: relative">
-      <!--column structure for mobile. flex direction should be column
-      pay attention to padding for connection order info and map-->
-      <!--<div class="columns">-->
-      <!--first column for map-->
-      <!--<div class="column">-->
+  <div class='container' v-if="!isLoading" style="position: relative">
+    <!-- <section class="section is-family-primary" id="section-results"> -->
+    <div class="box">
+      
+    </div>
 
-      <!--</div>-->
-      <!--second column for order info-->
-      <!--<div class="column">-->
 
-      <!--</div>-->
-      <!--</div>-->
-      <!--<div class="columns is-centered" id="order-info">-->
-      <!--<div class="column is-2" id="order-route">
-        <div class="card" id="order-route-card">
-          <div class="card-content">
-            <div class="content">
-              <div class="columns">
-                <div class="column is-1">
-                  <div class="columns" style="flex-direction: column">
-                    <div class="column">
-                      <span class="material-icons"> fiber_manual_record </span>
-                    </div>
-                    <div class="column"></div>
-                    <div class="column">
-                      <span class="material-icons"> fiber_manual_record </span>
-                    </div>
-                  </div>
-                </div>
-                <div class="column">
-                  <div class="columns" style="flex-direction: column">
-                    <div class="column">
-                      <p class="label">Vertrekpunt</p>
-                      <p class="info">{{ startAddressS }}</p>
-                    </div>
-                    <div class="column">
-                      <p class="label">Eindbestemming</p>
-                      <p class="info">{{ endAddressS }}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      </div>
-
-      <HereMap
-        :center="center"
-        :startLocation="this.startAddressGeo"
-        :endLocation="this.endAddressGeo"
-        :startAddress="this.startAddressS"
-        :endAddress="this.endAddressS"
-      />
-      <div class="column is-3">
-        <div class="card">
-          <div class="card-content">
-            <div class="content">
-              Lorem ipsum leo risus, porta ac consectetur ac, vestibulum at
-              eros. Donec id elit non mi porta gravida at eget metus. Cum sociis
-              natoque penatibus et magnis dis parturient montes, nascetur
-              \ridiculus mus. Cras mattis consectetur purus sit amet fermentum.
-              <button @click="updateTest()">update test</button>
-            </div>
-          </div>
-        </div>
-      </div>-->
-      <div class="columns is-centered" id="column-container">
+      <!-- <div class="columns is-centered" id="column-container">
       <div class="column is-half is-centered">
               <HereMap
         :center="center"
@@ -80,7 +15,7 @@
         :startAddress="this.startAddressS"
         :endAddress="this.endAddressS"
       />
-          <!--<img id="map-img" :src="map_urlS" />-->
+          <img id="map-img" :src="map_urlS" />
         </div>
         <div class="column is-one-third is-centered">
           <div
@@ -130,61 +65,52 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <b-loading
       :is-full-page="true"
       v-model="isLoading"
       :can-cancel="true"
     ></b-loading>
   
-  </section>
+  <!-- </section> -->
   </div>
 </template>
 
 <script>
 import Reservation from "../../Api/Reservation";
-import HereMap from "../../components/HereAPI/HereMap";
-import moment from 'moment';
+import moment from "moment";
 
 export default {
   props: {
     OrderID: Number,
   },
-  components: {
-    HereMap,
-  },
+  components: {},
   data() {
     return {
-      center: {
-        lat: 52.516,
-        lng: 13.3779,
-      },
-      map_urlS: "",
-      startAddressS: "",
-      endAddressS: "",
-      startAddressGeo: "",
-      endAddressGeo: "",
-      distanceS: 0,
-      traveltimeS: 0,
+      startAddress: "",
+      endAddress: "",
+      distance: 0,
+      traveltime: 0,
       ReservationDate: "",
-      farePriceS: 0,
+      farePrice: 0,
       paymentID: "",
       paymentMethod: "",
       isLoading: true,
-      data: null
+      data: null,
     };
   },
   mounted() {
     Reservation.getReservation(this.OrderID).then((response) => {
       console.log(response.data);
       this.data = response.data;
-      this.map_urlS = response.data.map_url;
-      this.startAddressS = response.data.start_address;
-      this.endAddressS = response.data.end_address;
-      this.distanceS = response.data.distance;
-      this.traveltimeS = response.data.travel_time;
-      this.ReservationDate = moment(response.data.pickup_date).format('D MMMM YYYY'); 
-      this.farePriceS = response.data.fare_price;
+      this.startAddress = response.data.start_address;
+      this.endAddress = response.data.end_address;
+      this.distance = response.data.distance;
+      this.traveltime = response.data.travel_time;
+      this.ReservationDate = moment(response.data.pickup_date).format(
+        "D MMMM YYYY"
+      );
+      this.farePrice = response.data.fare_price;
       this.paymentID = response.data.payment_id;
       this.startAddressGeo = response.data.start_address_geo;
       this.endAddressGeo = response.data.end_address_geo;
@@ -197,7 +123,6 @@ export default {
         }
       );
     });
-    
   },
   methods: {
     refundPayment() {
@@ -208,13 +133,13 @@ export default {
       );
     },
     updateTest() {
-
       this.data.refundIsAsked = 1;
-      Reservation.updateReservation(this.OrderID, this.data)
-      .then(response => {
-        console.log(response);
-      })
-    }
+      Reservation.updateReservation(this.OrderID, this.data).then(
+        (response) => {
+          console.log(response);
+        }
+      );
+    },
   },
 };
 </script>
