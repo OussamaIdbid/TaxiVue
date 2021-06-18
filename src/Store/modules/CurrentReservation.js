@@ -5,6 +5,7 @@ const state = {
     time: null,
     phonenumber: "",
   },
+  isCalculated: false,
   nextIsDisabled: false,
   previousIsVisible: false,
   nextIsVisible: true,
@@ -20,6 +21,9 @@ const getters = {
   },
   userDetails(state) {
     return state.userDetails;
+  },
+  isCalculated(state) {
+    return state.isCalculated;
   },
   nextIsDisabled(state) {
     return state.nextIsDisabled;
@@ -41,6 +45,9 @@ const actions = {
     commit("setUserDetails", userDetails);
   },
 
+  setCalculating({ commit }, boolean) {
+    commit("setCalculatingTrue", boolean);
+  },
   resetOrder({ commit }) {
     commit("resetOrder");
   },
@@ -70,6 +77,8 @@ const actions = {
 const mutations = {
   setReservation: (state, reservation) => (state.reservation = reservation),
   setUserDetails: (state, userDetails) => (state.userDetails = userDetails),
+  setCalculating: (state, boolean) => (state.isCalculated = boolean),
+
   resetOrder: (state) => {
     state.reservation = [];
 
