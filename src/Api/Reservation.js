@@ -24,6 +24,11 @@ export default {
         
         return Api.get("/allReservations");
     },
+    async getReservationsByPage(page) {
+        await Csrf.getCookie();
+
+        return Api.get(`reservationsByPage?page=${page}`)
+    },
     async getReservation(id) {
         await Csrf.getCookie();
         

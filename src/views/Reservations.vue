@@ -12,10 +12,24 @@
           :key="item.id"
           v-bind:OrderID="item.id"
         ></reservation-card>
+        <b-pagination
+          :total="total"
+          v-model="current"
+          :range-before="rangeBefore"
+          :range-after="rangeAfter"
+          :order="order"
+          :size="size"
+          :simple="isSimple"
+          :rounded="isRounded"
+          :per-page="perPage"
+          aria-next-label="Next page"
+          aria-previous-label="Previous page"
+          aria-page-label="Page"
+          aria-current-label="Current page"
+        >
+        </b-pagination>
       </b-tab-item>
-      <b-tab-item label="Geschiedenis">
-        Geen reserveringen
-      </b-tab-item>
+      <b-tab-item label="Geschiedenis"> Geen reserveringen </b-tab-item>
       <b-tab-item v-if="this.role == 3" label="Terugbetalingen">
         Geen reserveringen
       </b-tab-item>
@@ -46,26 +60,60 @@ export default {
       isLoading: true,
       activeTab: 0,
       Role: null,
+      total: null,
+      current: 1,
+      perPage: 10,
+      rangeBefore: 3,
+      rangeAfter: 1,
+      order: "",
+      size: "",
+      isSimple: false,
+      isRounded: false,
+
     };
   },
   mounted() {
     User.auth().then((response) => {
-      console.log(response.data);
       if (response.data.user_type == ROLES.ADMIN) {
-        Reservations.getAllReservations().then((response) => {
-          this.data = response.data;
+        Reservations.getReservationsByPage(this.current).then((response) => {
+          this.total = response.data.total;
+          this.perPage = response.data.per_page;
+          this.data = response.data.data;
           this.isLoading = false;
           this.role = ROLES.ADMIN;
         });
       } else if (response.data.user_type == ROLES.CUSTOMER) {
-        Reservations.getReservations().then((response) => {
+        Reservations.getReservationsByPage(this.current).then((response) => {
           console.log(response);
-          this.data = response.data;
+          this.total = response.data.total;
+          this.perPage = response.data.per_page;
+          this.data = response.data.data;
           this.isLoading = false;
           this.role = ROLES.CUSTOMER;
         });
       }
     });
+  },
+  watch: {
+    current: function (val) {
+      User.auth().then((response) => {
+        console.log(response.data);
+        if (response.data.user_type == ROLES.ADMIN) {
+          Reservations.getReservationsByPage(val).then((response) => {
+            this.data = response.data.data;
+            this.isLoading = false;
+            this.role = ROLES.ADMIN;
+          });
+        } else if (response.data.user_type == ROLES.CUSTOMER) {
+          Reservations.getReservationsByPage(val).then((response) => {
+            console.log(response);
+            this.data = response.data.data;
+            this.isLoading = false;
+            this.role = ROLES.CUSTOMER;
+          });
+        }
+      });
+    },
   },
 };
 </script>
