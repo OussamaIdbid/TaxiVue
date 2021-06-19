@@ -84,7 +84,7 @@
             </div>
           </div>
           <div v-else>
-            <b-button type="is-danger" @click="confirmRefund"
+            <b-button type="is-danger" @click="refundPayment"
               >Bevestig terugbetaling</b-button
             >
             <b-button type="is-danger" @click="denyRefund"
@@ -233,9 +233,10 @@ export default {
   },
   methods: {
     refundPayment() {
-      Reservation.RefundPayment(this.paymentID, this.farePriceS).then(
+      Reservation.RefundPayment(this.paymentID, this.farePrice).then(
         (response) => {
           console.log(response);
+          this.confirmRefund();
         }
       );
     },
@@ -250,6 +251,7 @@ export default {
       });
     },
     confirmRefund() {
+
       this.data.refundIsConfirmed = 1;
       Reservation.updateReservation(
         this.OrderID,
