@@ -84,12 +84,18 @@ export default {
           this.total = response.data.total;
           this.perPage = response.data.per_page;
           this.data = response.data.data;
-          this.refundedData = this.data.filter(reservation => reservation.refundIsAsked)
-          this.refundedData.map(reservation => {
-            reservation.isRefund = true
-          });
           this.isLoading = false;
           this.role = ROLES.ADMIN;
+        });
+        Reservations.getAllReservations().then((response) => {
+          console.log(response);
+          this.refundedData = response.data.filter(
+            (reservation) => reservation.refundIsAsked
+          );
+          this.refundedData.map((reservation) => {
+            reservation.isRefund = true;
+          });
+          console.log(this.refundedData);
         });
       } else if (response.data.user_type == ROLES.CUSTOMER) {
         Reservations.getReservationsByPage(this.current).then((response) => {
