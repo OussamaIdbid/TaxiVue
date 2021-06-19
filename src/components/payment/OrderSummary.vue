@@ -94,37 +94,49 @@
         </div>
       </div>
       <div v-if="Role === 1">
-        <div class="buttons">
-          <b-button
-            v-if="!data.refundIsAsked"
-            @click="askRefund"
-            expanded
-            type="is-danger"
-            >Terugbetaling aanvragen</b-button
-          >
-          <div v-else-if="data.refundIsAsked">
-            <div
-              v-if="data.refundIsConfirmed && data.refundIsAsked"
-              class="column-info request-label"
-            >
+        <div class="">
+          <div v-if="refundIsDone">
+            <div class="column-info request-label">
               <span class="material-icons"> done </span>
               <div>
-                <p class="label">Je terugebetaling verzoek is bevestigd</p>
+                <p class="label">Je terugbetaling verzoek succesvol voltooid</p>
               </div>
             </div>
-            <div
-              v-else-if="data.refundIsDenied && data.refundIsAsked"
-              class="column-info request-label"
+          </div>
+          <div v-else>
+            <b-button
+              v-if="!data.refundIsAsked"
+              @click="askRefund"
+              expanded
+              type="is-danger"
+              >Terugbetaling aanvragen</b-button
             >
-              <span class="material-icons"> close </span>
-              <div>
-                <p class="label">Je terugebetaling verzoek is geweigerd</p>
+            <div v-else-if="data.refundIsAsked">
+              <div
+                v-if="data.refundIsConfirmed && data.refundIsAsked"
+                class="column-info request-label"
+              >
+                <span class="material-icons"> done </span>
+                <div>
+                  <p class="label">Je terugbetaling verzoek is bevestigd</p>
+                </div>
               </div>
-            </div>
-            <div v-else class="column-info request-label">
-              <span class="material-icons"> hourglass_top </span>
-              <div>
-                <p class="label">Je terugebetaling verzoek is in behandeling</p>
+              <div
+                v-else-if="data.refundIsDenied && data.refundIsAsked"
+                class="column-info request-label"
+              >
+                <span class="material-icons"> close </span>
+                <div>
+                  <p class="label">Je terugbetaling verzoek is geweigerd</p>
+                </div>
+              </div>
+              <div v-else class="column-info request-label">
+                <span class="material-icons"> hourglass_top </span>
+                <div>
+                  <p class="label">
+                    Je terugbetaling verzoek is in behandeling
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -164,6 +176,7 @@ export default {
       data: null,
       orderNumber: "",
       Role: null,
+      refundIsDone: false,
     };
   },
   computed: {
@@ -196,9 +209,11 @@ export default {
       this.endAddress = filteredEndAddress;
       this.distance = response.data.distance;
       this.travelTime = response.data.travel_time;
-      this.ReservationDate = moment(response.data.pickup_date).format(
-        "D MMMM YYYY"
-      );
+      this.ReservationDate =
+        moment(response.data.pickup_date.split(" ")[0]).format("D MMMM YYYY") +
+        " " +
+        response.data.pickup_date.split(" ")[1]
+
       this.farePrice = response.data.fare_price;
       this.paymentID = response.data.payment_id;
       this.startAddressGeo = response.data.start_address_geo;
@@ -210,6 +225,8 @@ export default {
           console.log(response);
           this.paymentMethod = response.data.method;
           this.isLoading = false;
+          this.refundIsDone =
+            response.data.amountRefunded.value > 0 ? true : false;
         }
       );
     });
@@ -224,27 +241,33 @@ export default {
     },
     askRefund() {
       this.data.refundIsAsked = 1;
-      Reservation.updateReservation(this.OrderID, this.data, this.data.user_id).then(
-        (response) => {
-          console.log(response);
-        }
-      );
+      Reservation.updateReservation(
+        this.OrderID,
+        this.data,
+        this.data.user_id
+      ).then((response) => {
+        console.log(response);
+      });
     },
     confirmRefund() {
       this.data.refundIsConfirmed = 1;
-      Reservation.updateReservation(this.OrderID, this.data,this.data.user_id).then(
-        (response) => {
-          console.log(response);
-        }
-      );
+      Reservation.updateReservation(
+        this.OrderID,
+        this.data,
+        this.data.user_id
+      ).then((response) => {
+        console.log(response);
+      });
     },
     denyRefund() {
       this.data.refundIsDenied = 1;
-      Reservation.updateReservation(this.OrderID, this.data,this.data.user_id).then(
-        (response) => {
-          console.log(response);
-        }
-      );
+      Reservation.updateReservation(
+        this.OrderID,
+        this.data,
+        this.data.user_id
+      ).then((response) => {
+        console.log(response);
+      });
     },
     closeModal() {
       this.$parent.close();
@@ -273,6 +296,7 @@ export default {
   font-size: large;
   margin-bottom: 0;
 }
+
 .header {
   font-size: smaller;
 }
