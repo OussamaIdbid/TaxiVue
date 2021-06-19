@@ -67,7 +67,7 @@
 import Reservation from "../../Api/Reservation";
 import User from "../../Api/User";
 import { mapGetters, mapActions } from "vuex";
-
+import moment from 'moment';
 export default {
   name: "PaymentResult",
   data() {
@@ -154,7 +154,7 @@ export default {
           this.reservation.reservation.EndObject.geometry.coordinates[0],
 
         amount_of_people: this.reservation.reservation.amountOfPeople,
-        pickup_date: this.reservation.userDetails.date,
+        pickup_date: moment(this.reservation.userDetails.date).format('YYYY-DD-MM') + " " + moment(this.reservation.userDetails.time).format('HH:mm') ,
         fare_price: this.reservation.reservation.farePrice,
         distance: this.reservation.reservation.distance,
         travel_time: this.reservation.reservation.travelTime,
