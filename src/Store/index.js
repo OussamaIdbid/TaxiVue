@@ -13,7 +13,7 @@ export default new Vuex.Store({
     },
     plugins: [
         createPersistedState({
-          paths: ['CurrentReservation.reservation','CurrentReservation.currentStep','CurrentReservation.userDetails']
+          paths: ['CurrentReservation.reservation','CurrentReservation.currentStep','CurrentReservation.userDetails', 'CurrentReservation.isCalculated']
         }),
       ],
 })
