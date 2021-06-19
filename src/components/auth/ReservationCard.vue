@@ -60,7 +60,7 @@
       aria-modal
     >
       <template>
-        <reservations-info v-bind:OrderID="OrderID"></reservations-info>
+        <reservations-info v-bind:OrderID="OrderID" v-bind:IsRefund="IsRefund"></reservations-info>
       </template>
     </b-modal>
   </div>
@@ -74,6 +74,7 @@ import moment from "moment";
 export default {
   props: {
     OrderID: Number,
+    IsRefund: Boolean,
   },
   data() {
     return {

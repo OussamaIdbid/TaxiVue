@@ -31,7 +31,12 @@
       </b-tab-item>
       <b-tab-item label="Geschiedenis"> Geen reserveringen </b-tab-item>
       <b-tab-item v-if="this.role == 3" label="Terugbetalingen">
-        Geen reserveringen
+        <reservation-card
+          v-for="item in this.refundedData"
+          :key="item.id"
+          :OrderID="item.id"
+          :IsRefund="item.isRefund"
+        ></reservation-card>
       </b-tab-item>
     </b-tabs>
 
@@ -57,6 +62,7 @@ export default {
   data() {
     return {
       data: null,
+      refundedData: null,
       isLoading: true,
       activeTab: 0,
       Role: null,
@@ -69,7 +75,6 @@ export default {
       size: "",
       isSimple: false,
       isRounded: false,
-
     };
   },
   mounted() {
@@ -79,6 +84,10 @@ export default {
           this.total = response.data.total;
           this.perPage = response.data.per_page;
           this.data = response.data.data;
+          this.refundedData = this.data.filter(reservation => reservation.refundIsAsked)
+          this.refundedData.map(reservation => {
+            reservation.isRefund = true
+          });
           this.isLoading = false;
           this.role = ROLES.ADMIN;
         });
