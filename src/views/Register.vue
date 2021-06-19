@@ -98,6 +98,7 @@ export default {
         })
         .catch((error) => {
           if (error.response.status === 422) {
+            this.isLoading = false;
             this.errors = error.response.data.errors;
             this.error_email = error.response.data.errors.email[0];
             this.error_password = error.response.data.errors.password[0];
