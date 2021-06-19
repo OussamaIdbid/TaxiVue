@@ -42,10 +42,10 @@ export default {
   },
   computed: {
     ...mapGetters(["authenticated"]),
-    ...mapGetters("CurrentReservation", ["reservation"]),
+    ...mapGetters("CurrentReservation", ["isCalculated"]),
   },
   methods: {
-    ...mapActions("CurrentReservation", ["resetOrder"]),
+    ...mapActions("CurrentReservation", ["resetOrder", "setCalculating"]),
     backToHome() {
       this.$router.push({ name: "Home" });
       // localStorage.removeItem("calculated", false)
@@ -59,22 +59,25 @@ export default {
   },
   beforeRouteLeave: function (to, from, next) {
     if (this.authenticated) {
-      this.$buefy.snackbar.open({
-        indefinite: true,
-        type: "is-danger",
-        actionText: "Ja",
-        position: "is-top",
-        message: "Weet je zeker dat je je reservering wilt annuleren?",
-        cancelText: "Nee",
-        onAction: () => {
-          this.resetOrder();
-          next();
-        },
-      });
+      if (this.isCalculated === false) {
+        next();
+      } else {
+        this.$buefy.snackbar.open({
+          indefinite: true,
+          type: "is-danger",
+          actionText: "Ja",
+          position: "is-top",
+          message: "Weet je zeker dat je je reservering wilt annuleren?",
+          cancelText: "Nee",
+          onAction: () => {
+            this.setCalculating(false);
+            this.resetOrder();
+            next();
+          },
+        });
+      }
     } else if (!this.authenticated) {
-      localStorage.setItem("calculated", false);
-      next();
-    } else if (!localStorage.getItem("calculated")) {
+      this.setCalculating(false);
       next();
     }
   },
@@ -83,12 +86,10 @@ export default {
     // if (!this.authenticated) {
     //   this.ToReservation();
     // }
-    console.log('heheh');
-    if (localStorage.getItem("calculated") === false) {
-      console.log("hehheh");
-      // this.$router.push({ name: "Home" });
+    if (this.isCalculated === false) {
+      this.$router.push({ name: "Home" });
     } else {
-      console.log('fdfdf');
+      console.log("fdfdf");
       setTimeout(() => {
         document.getElementById("loader").classList.remove("is-active");
         localStorage.setItem("calculated", true);

@@ -268,7 +268,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('CurrentReservation', ['pushReservation','setCalculatedTrue']),
+    ...mapActions('CurrentReservation', ['pushReservation','setCalculating']),
     processForm() {
       document.getElementById("loader").classList.add("is-active");
       getRoute(this.selectedStart, this.selectedEnd).then((response) => {
@@ -291,7 +291,7 @@ export default {
           distance: distanceInKmString
         })
 
-        this.setCalculatedTrue()
+        this.setCalculating(true)
       })
       .then(this.$router.push({name: "FareCalculationResult"})
       )
