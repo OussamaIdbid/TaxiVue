@@ -1,6 +1,10 @@
 <template>
   <div class="container" v-if="!isLoading" style="position: relative">
     <div class="box">
+      <button class="material-icons close-modal" @click="closeModal">
+        close
+      </button>
+
       <div class="column-info">
         <span class="material-icons"> tag </span>
         <div v-if="!isLoading" class="info-end-wrapper">
@@ -62,6 +66,67 @@
           <p class="info-end">€{{ farePrice }}</p>
         </div>
       </div>
+      <div v-if="Role === 3">
+        <div v-if="IsRefund" class="buttons">
+          <div v-if="data.refundIsConfirmed" class="column-info request-label">
+            <span class="material-icons"> done </span>
+            <div>
+              <p class="label">Terugbetaling is geaccepteerd</p>
+            </div>
+          </div>
+          <div v-else-if="data.refundIsDenied" class="column-info request-label">
+            <span class="material-icons"> close </span>
+            <div>
+              <p class="label">Terugbetaling is geweigerd</p>
+            </div>
+          </div>
+          <div v-else>
+            <b-button type="is-danger" @click="confirmRefund"
+              >Bevestig terugbetaling</b-button
+            >
+            <b-button type="is-danger" @click="denyRefund"
+              >Weiger terugbetaling</b-button
+            >
+          </div>
+        </div>
+      </div>
+      <div v-if="Role === 1">
+        <div class="buttons">
+          <b-button
+            v-if="!data.refundIsAsked"
+            @click="askRefund"
+            expanded
+            type="is-danger"
+            >Terugbetaling aanvragen</b-button
+          >
+          <div v-else-if="data.refundIsAsked">
+            <div
+              v-if="data.refundIsConfirmed && data.refundIsAsked"
+              class="column-info request-label"
+            >
+              <span class="material-icons"> done </span>
+              <div>
+                <p class="label">Je terugebetaling verzoek is bevestigd</p>
+              </div>
+            </div>
+            <div
+              v-else-if="data.refundIsDenied && data.refundIsAsked"
+              class="column-info request-label"
+            >
+              <span class="material-icons"> close </span>
+              <div>
+                <p class="label">Je terugebetaling verzoek is geweigerd</p>
+              </div>
+            </div>
+            <div v-else class="column-info request-label">
+              <span class="material-icons"> hourglass_top </span>
+              <div>
+                <p class="label">Je terugebetaling verzoek is in behandeling</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <b-loading
       :is-full-page="true"
@@ -74,10 +139,12 @@
 <script>
 import Reservation from "../../Api/Reservation";
 import moment from "moment";
-
+import { ROLES } from "./../../constants/roles";
+import { mapGetters } from "vuex";
 export default {
   props: {
     OrderID: Number,
+    IsRefund: Boolean,
   },
   components: {},
   data() {
@@ -93,9 +160,24 @@ export default {
       isLoading: true,
       data: null,
       orderNumber: "",
+      Role: null,
     };
   },
+  computed: {
+    ...mapGetters(["user"]),
+  },
   mounted() {
+    console.log(this.IsRefund);
+    switch (this.user.user_type) {
+      case 1:
+        this.Role = ROLES.CUSTOMER;
+        break;
+      case 3:
+        this.Role = ROLES.ADMIN;
+        break;
+      default:
+        break;
+    }
     Reservation.getReservation(this.OrderID).then((response) => {
       const filteredStartAddress = response.data.start_address.replace(
         ", Nederland",
@@ -105,8 +187,8 @@ export default {
         ", Nederland",
         ""
       );
-      console.log(response.data);
       this.data = response.data;
+      console.log(this.data.refundIsAsked);
       this.startAddress = filteredStartAddress;
       this.endAddress = filteredEndAddress;
       this.distance = response.data.distance;
@@ -137,13 +219,32 @@ export default {
         }
       );
     },
-    updateTest() {
+    askRefund() {
       this.data.refundIsAsked = 1;
       Reservation.updateReservation(this.OrderID, this.data).then(
         (response) => {
           console.log(response);
         }
       );
+    },
+    confirmRefund() {
+      this.data.refundIsConfirmed = 1;
+      Reservation.updateReservation(this.OrderID, this.data).then(
+        (response) => {
+          console.log(response);
+        }
+      );
+    },
+    denyRefund() {
+      this.data.refundIsDenied = 1;
+      Reservation.updateReservation(this.OrderID, this.data).then(
+        (response) => {
+          console.log(response);
+        }
+      );
+    },
+    closeModal() {
+      this.$parent.close();
     },
   },
 };
@@ -162,6 +263,8 @@ export default {
 }
 .box {
   padding: 3rem;
+  display: flex;
+  flex-direction: column;
 }
 .label {
   font-size: large;
@@ -170,8 +273,15 @@ export default {
 .header {
   font-size: smaller;
 }
+.close-modal {
+  align-self: flex-end;
+  color: black !important;
+}
+.is-divider {
+  margin: 0.9rem 0;
+}
 .material-icons {
-  color: #f14668 !important;
+  color: #f14668;
   margin-right: 1rem;
 }
 </style>
