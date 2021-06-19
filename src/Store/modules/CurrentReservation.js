@@ -46,7 +46,7 @@ const actions = {
   },
 
   setCalculating({ commit }, boolean) {
-    commit("setCalculatingTrue", boolean);
+    commit("setCalculating", boolean);
   },
   resetOrder({ commit }) {
     commit("resetOrder");
