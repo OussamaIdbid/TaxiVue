@@ -29,7 +29,7 @@
         >
         </b-pagination>
       </b-tab-item>
-      <b-tab-item label="Geschiedenis"> Geen reserveringen </b-tab-item>
+      <!-- <b-tab-item label="Geschiedenis"> Geen reserveringen </b-tab-item> -->
       <b-tab-item v-if="this.role == 3" label="Terugbetalingen">
         <reservation-card
           v-for="item in this.refundedData"
