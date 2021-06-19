@@ -36,7 +36,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-
+import moment from 'moment'
 export default {
   data() {
     return {
@@ -51,9 +51,20 @@ export default {
   },
   mounted() {
     this.phoneNumber = this.reservation.userDetails.phonenumber;
-    this.selectedTime = new Date(this.reservation.userDetails.time);
 
-    this.selectedDate = new Date(this.reservation.userDetails.date);
+    if(this.reservation.userDetails.time !== null) {
+        this.selectedTime = new Date(this.reservation.userDetails.time);
+    }
+    else {
+      this.selectedTime = null
+    }
+    if(this.reservation.userDetails.date !== null) {
+        this.selectedDate = new Date(this.reservation.userDetails.date);
+    }
+    else {
+      this.selectedDate = null
+    }
+
     this.checkForm();
   },
   methods: {
@@ -85,10 +96,12 @@ export default {
   },
   watch: {
     selectedDate: function (val) {
+      console.log(moment(val).format('DD-MM-YYYY'))
       this.pushUserDetails({ ...this.userDetails, date: val });
       this.checkForm();
     },
     selectedTime: function (val) {
+      console.log(moment(val).format('HH:mm:ss'))
       this.pushUserDetails({ ...this.userDetails, time: val });
       this.checkForm();
     },
