@@ -74,7 +74,10 @@
               <p class="label">Terugbetaling is geaccepteerd</p>
             </div>
           </div>
-          <div v-else-if="data.refundIsDenied" class="column-info request-label">
+          <div
+            v-else-if="data.refundIsDenied"
+            class="column-info request-label"
+          >
             <span class="material-icons"> close </span>
             <div>
               <p class="label">Terugbetaling is geweigerd</p>
@@ -127,12 +130,12 @@
           </div>
         </div>
       </div>
+      <b-loading
+        :is-full-page="true"
+        v-model="isLoading"
+        :can-cancel="true"
+      ></b-loading>
     </div>
-    <b-loading
-      :is-full-page="true"
-      v-model="isLoading"
-      :can-cancel="true"
-    ></b-loading>
   </div>
 </template>
 
@@ -221,7 +224,7 @@ export default {
     },
     askRefund() {
       this.data.refundIsAsked = 1;
-      Reservation.updateReservation(this.OrderID, this.data).then(
+      Reservation.updateReservation(this.OrderID, this.data, this.data.user_id).then(
         (response) => {
           console.log(response);
         }
@@ -229,7 +232,7 @@ export default {
     },
     confirmRefund() {
       this.data.refundIsConfirmed = 1;
-      Reservation.updateReservation(this.OrderID, this.data).then(
+      Reservation.updateReservation(this.OrderID, this.data,this.data.user_id).then(
         (response) => {
           console.log(response);
         }
@@ -237,7 +240,7 @@ export default {
     },
     denyRefund() {
       this.data.refundIsDenied = 1;
-      Reservation.updateReservation(this.OrderID, this.data).then(
+      Reservation.updateReservation(this.OrderID, this.data,this.data.user_id).then(
         (response) => {
           console.log(response);
         }
