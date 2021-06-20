@@ -37,7 +37,7 @@ export default {
     ...mapGetters("CurrentReservation", ["reservation"]),
   },
   methods: {
-    //TODO SET CENTER OF MAP AND ZOOM BASED ON COORDINATES 
+    //TODO SET CENTER OF MAP AND ZOOM BASED ON COORDINATES
     async CreateMap() {
       mapboxgl.accessToken = MapBoxKey;
       this.map = new mapboxgl.Map({
@@ -45,7 +45,7 @@ export default {
         // style URL
         style: "mapbox://styles/mapbox/light-v10",
         center: [5.2793703, 52.2129919], // starting position
-        zoom: 7,
+        zoom: 6,
       });
     },
     async addRoute() {
@@ -190,6 +190,14 @@ export default {
           },
         });
       }
+
+      const bounds = request.data.routes[0].geometry.coordinates.reduce(function (bounds, coord) {
+        return bounds.extend(coord);
+      }, new mapboxgl.LngLatBounds(request.data.routes[0].geometry.coordinates[0], request.data.routes[0].geometry.coordinates[0]));
+
+      this.map.fitBounds(bounds, {
+        padding: 20,
+      });
     },
   },
 };
