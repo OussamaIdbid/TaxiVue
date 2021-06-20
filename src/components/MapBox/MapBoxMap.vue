@@ -37,7 +37,6 @@ export default {
     ...mapGetters("CurrentReservation", ["reservation"]),
   },
   methods: {
-    //TODO SET CENTER OF MAP AND ZOOM BASED ON COORDINATES
     async CreateMap() {
       mapboxgl.accessToken = MapBoxKey;
       this.map = new mapboxgl.Map({
@@ -46,6 +45,7 @@ export default {
         style: "mapbox://styles/mapbox/light-v10",
         center: [5.2793703, 52.2129919], // starting position
         zoom: 6,
+        interactive: false
       });
     },
     async addRoute() {
