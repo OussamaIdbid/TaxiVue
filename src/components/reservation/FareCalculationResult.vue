@@ -9,11 +9,6 @@
         <MapBoxMap />
       </div>
     </div>
-    <b-button
-      label="Launch snackbar (with cancel)"
-      size="is-medium"
-      @click="hasCancel"
-    />
   </section>
 </template>
 
@@ -82,10 +77,6 @@ export default {
     }
   },
   mounted() {
-    // console.log(localStorage.getItem("calculated"));
-    // if (!this.authenticated) {
-    //   this.ToReservation();
-    // }
     if (this.isCalculated === false) {
       this.$router.push({ name: "Home" });
     } else {
