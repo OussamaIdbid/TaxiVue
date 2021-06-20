@@ -129,14 +129,14 @@ export default {
     };
   },
   mounted() {
+    //TODO: Total price doesn't update when changing adress
     console.log(this.reservation.userDetails);
 
     this.phoneNumber = this.reservation.userDetails.phonenumber;
     this.time = new Date(this.reservation.userDetails.time);
 
     this.date = new Date(this.reservation.userDetails.date);
-    console.log(typeof this.reservation.reservation.farePrice);
-    (this.totalPrice = this.reservation.reservation.farePrice), 10;
+    this.totalPrice = this.reservation.reservation.farePrice;
   },
   watch: {
     discountCode: function (val) {
@@ -144,6 +144,7 @@ export default {
         ? (this.DiscountButtonIsDisabled = false)
         : (this.DiscountButtonIsDisabled = true);
     },
+    
   },
   methods: {
     handlePayment() {
