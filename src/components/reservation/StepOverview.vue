@@ -214,14 +214,14 @@
             <span class="material-icons"> moving </span>
             <div v-if="!isLoading" class="info-end-wrapper">
               <p class="label">Afstand</p>
-              <p class="info-end">€{{ reservation.reservation.distance }}</p>
+              <p class="info-end">{{ reservation.reservation.distance }}</p>
             </div>
           </div>
           <div class="column-info">
             <span class="material-icons"> schedule </span>
             <div v-if="!isLoading" class="info-end-wrapper">
               <p class="label">Reistijd</p>
-              <p class="info-end">€{{ reservation.reservation.travelTime }}</p>
+              <p class="info-end">{{ reservation.reservation.travelTime }}</p>
             </div>
           </div>
           <div class="column-info">
