@@ -148,5 +148,28 @@ export default {
   section {
     padding: 0 !important;
   }
+  .column {
+    padding: 0;
+  }
+  .b-tabs,
+  .tab-content {
+    padding: 0 !important;
+  }
+}
+</style>
+
+<style>
+@media only screen and (max-width: 768px) {
+  section {
+    padding: 0 !important;
+  }
+  .column {
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+  .b-tabs,
+  .tab-content {
+    padding: 0 !important;
+  }
 }
 </style>
