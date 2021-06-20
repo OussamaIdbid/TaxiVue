@@ -210,17 +210,26 @@
         </div>
         <div class="is-divider-vertical" data-content=""></div>
         <div class="column" id="details-column">
-          <div>
-            <b-icon pack="fas" icon="route" size="is-large"> </b-icon>
-            <h4>{{ reservation.reservation.distance }}</h4>
+          <div class="column-info">
+            <span class="material-icons"> moving </span>
+            <div v-if="!isLoading" class="info-end-wrapper">
+              <p class="label">Afstand</p>
+              <p class="info-end">€{{ reservation.reservation.distance }}</p>
+            </div>
           </div>
-          <div>
-            <b-icon pack="fas" icon="stopwatch" size="is-large"> </b-icon>
-            <h4>{{ reservation.reservation.travelTime }}</h4>
+          <div class="column-info">
+            <span class="material-icons"> schedule </span>
+            <div v-if="!isLoading" class="info-end-wrapper">
+              <p class="label">Reistijd</p>
+              <p class="info-end">€{{ reservation.reservation.travelTime }}</p>
+            </div>
           </div>
-          <div>
-            <b-icon pack="fas" icon="euro-sign" size="is-large"> </b-icon>
-            <h4>{{ reservation.reservation.farePrice }}</h4>
+          <div class="column-info">
+            <span class="material-icons"> euro </span>
+            <div v-if="!isLoading" class="info-end-wrapper">
+              <p class="label">Prijs</p>
+              <p class="info-end">€{{ reservation.reservation.farePrice }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -267,7 +276,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("CurrentReservation", ["reservation","nextIsDisabled" ]),
+    ...mapGetters("CurrentReservation", ["reservation", "nextIsDisabled"]),
     ...mapGetters(["authenticated"]),
   },
 
@@ -295,10 +304,10 @@ export default {
       "enableNextButton",
     ]),
     editFare() {
-      this.disableNextButton()
+      this.disableNextButton();
     },
     cancelEditFare() {
-      this.enableNextButton()
+      this.enableNextButton();
 
       this.StartInput = JSON.parse(
         JSON.stringify(this.reservation)
@@ -336,7 +345,7 @@ export default {
         })
         .then(() => {
           this.isLoading = false;
-          this.enableNextButton()
+          this.enableNextButton();
         });
     },
     assignTagStart(slot) {
@@ -424,9 +433,17 @@ export default {
   display: flex;
   justify-content: flex-end;
 }
-#details-column {
+
+.label {
+  font-size: large;
+  margin-bottom: 0;
+}
+.material-icons {
+  color: #f14668;
+  margin-right: 1rem;
+}
+.column-info {
   display: flex;
-  justify-content: space-evenly;
-  align-items: center;
+  margin-bottom: 1rem;
 }
 </style>
