@@ -1,56 +1,74 @@
 <template>
   <div>
-    <section
-      v-if="!isLoading && IsPaid"
-      class="section is-family-primary"
-      id="section-results"
-    >
-      <div class="container">
-        <div class="columns is-centered" id="column-container">
-          <div class="column is-one-third is-centered">
-            <div
-              id="results-tile"
-              class="tile is-parent has-background-white rounded-container"
-            >
-              <div class="content">
-                <p class="title is-size-6">Afspraak bevestiging</p>
+    <section v-if="!isLoading && IsPaid" class="section is-family-primary">
+      <div class="result-header">
+        <span class="material-icons result-header-icon">check_circle</span>
+        <h1 class="result-header-text">Je reservering is bevestigd!</h1>
+        <p class="result-header-info">
+          Er is een bevestigingsmail verzonden naar
+          <span class="email-span">{{ user.email }}</span>
+        </p>
+      </div>
+      <div class="box">
+        <div class="column-info">
+          <span class="material-icons"> tag </span>
+          <div v-if="!isLoading" class="info-end-wrapper">
+            <p class="label">Reserveringsnummer</p>
+            <p class="info-end">#{{ orderId }}</p>
+          </div>
+        </div>
+        <div class="is-divider" data-content=""></div>
 
-                <div class="content">
-                  <div id="route-wrapper">
-                    <div id="start-address-container">
-                      <p id="start-address-text">Van:</p>
-                      <p id="start-address">{{ startAddress }}</p>
-                    </div>
-                    <div id="end-address-container">
-                      <p id="end-address-text">Naar:</p>
-                      <p id="end-address">{{ endAddress }}</p>
-                    </div>
-                  </div>
-                  <div id="details-wrapper">
-                    <div id="km-container">
-                      <p class="text">Afstand:</p>
-                      <p class="amount">{{ distance }}</p>
-                    </div>
-                    <div id="min-container">
-                      <p class="text">Reistijd:</p>
-                      <p class="amount">{{ travelTime }}</p>
-                    </div>
-                  </div>
-                  <div class="details-container">
-                    <p class="text">Datum:</p>
-                    <p class="amount">{{ ReservationDate }}</p>
-                  </div>
-                  <div class="details-container">
-                    <p class="text">Ritprijs:</p>
-                    <p class="amount">€{{ farePrice }}</p>
-                  </div>
-                  <div class="details-container">
-                    <p class="text">Betaalmethode:</p>
-                    <p class="amount">{{ PaymentMethod }}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div class="column-info">
+          <span class="material-icons"> fiber_manual_record </span>
+          <div v-if="!isLoading" class="info-start-wrapper">
+            <p class="label">Vertrekpunt</p>
+            <p class="info-start">{{ startAddress }}</p>
+          </div>
+        </div>
+        <div class="column-info">
+          <span class="material-icons"> location_on </span>
+          <div v-if="!isLoading" class="info-end-wrapper">
+            <p class="label">Eindbestemming</p>
+            <p class="info-end">{{ endAddress }}</p>
+          </div>
+        </div>
+        <div class="is-divider" data-content=""></div>
+        <div class="column-info">
+          <span class="material-icons"> insert_invitation </span>
+          <div v-if="!isLoading" class="info-end-wrapper">
+            <p class="label">Datum</p>
+            <p class="info-end">{{ ReservationDate }}</p>
+          </div>
+        </div>
+        <div class="column-info">
+          <span class="material-icons"> moving </span>
+          <div v-if="!isLoading" class="info-end-wrapper">
+            <p class="label">Afstand</p>
+            <p class="info-end">{{ distance }}</p>
+          </div>
+        </div>
+        <div class="column-info">
+          <span class="material-icons"> schedule </span>
+          <div v-if="!isLoading" class="info-end-wrapper">
+            <p class="label">Reistijd</p>
+            <p class="info-end">{{ travelTime }}</p>
+          </div>
+        </div>
+        <div class="is-divider" data-content=""></div>
+
+        <div class="column-info">
+          <span class="material-icons"> payments </span>
+          <div v-if="!isLoading" class="info-end-wrapper">
+            <p class="label">Betaalmethode</p>
+            <p class="info-end">{{ paymentMethod }}</p>
+          </div>
+        </div>
+        <div class="column-info">
+          <span class="material-icons"> euro </span>
+          <div v-if="!isLoading" class="info-end-wrapper">
+            <p class="label">Prijs</p>
+            <p class="info-end">€{{ farePrice }}</p>
           </div>
         </div>
       </div>
@@ -67,7 +85,7 @@
 import Reservation from "../../Api/Reservation";
 import User from "../../Api/User";
 import { mapGetters, mapActions } from "vuex";
-import moment from 'moment';
+import moment from "moment";
 export default {
   name: "PaymentResult",
   data() {
@@ -77,7 +95,8 @@ export default {
       ReservationUserId: null,
       ReservationOrderId: null,
       ReservationPaymentId: null,
-      PaymentMethod: null,
+      orderId: null,
+      paymentMethod: null,
       Errors: [],
       IsAuthorized: false,
       OrderIsFound: false,
@@ -99,7 +118,6 @@ export default {
 
     Reservation.getReservationbyOrderId(this.$route.query.orderID)
       .then((response) => {
-        console.log(response.data);
         if (response.data.status == "Closed") {
           this.$router.push({ name: "notFound" });
         }
@@ -133,6 +151,7 @@ export default {
   beforeDestroy() {},
   computed: {
     ...mapGetters("CurrentReservation", ["reservation"]),
+    ...mapGetters(["user"]),
   },
   methods: {
     ...mapActions("CurrentReservation", ["resetOrder"]),
@@ -154,7 +173,10 @@ export default {
           this.reservation.reservation.EndObject.geometry.coordinates[0],
 
         amount_of_people: this.reservation.reservation.amountOfPeople,
-        pickup_date: moment(this.reservation.userDetails.date).format('YYYY-DD-MM') + " " + moment(this.reservation.userDetails.time).format('HH:mm') ,
+        pickup_date:
+          moment(this.reservation.userDetails.date).format("YYYY-DD-MM") +
+          " " +
+          moment(this.reservation.userDetails.time).format("HH:mm"),
         fare_price: this.reservation.reservation.farePrice,
         distance: this.reservation.reservation.distance,
         travel_time: this.reservation.reservation.travelTime,
@@ -166,6 +188,7 @@ export default {
         console.log(response);
         this.ReservationUserId = response.data.user_id;
         this.ReservationOrderId = response.data.payment_id;
+        this.orderId = response.data.order_id;
         this.startAddress = response.data.start_address;
         this.endAddress = response.data.end_address;
         this.distance = response.data.distance;
@@ -178,7 +201,7 @@ export default {
         }).then((response) => {
           console.log(response.data);
           this.PaymentStatus = response.data.status;
-          this.PaymentMethod = response.data.method;
+          this.paymentMethod = response.data.method;
           this.isLoading = false;
         });
       });
@@ -188,64 +211,73 @@ export default {
 </script>
 
 <style scoped>
-#column-container {
-  flex-direction: row;
-}
-#results-tile {
+.column-info {
   display: flex;
-  flex-direction: column;
-  box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
-    0 0 0 1px rgba(10, 10, 10, 0.02);
-}
-#km-text,
-#min-text,
-.text {
-  font-size: small;
-  margin-bottom: 0;
-  align-self: center;
-}
-#start-address,
-#end-address {
-  font-size: small;
-}
-#start-address-text,
-#end-address-text {
-  font-size: small;
-  margin-bottom: 0;
-  color: grey;
-}
-
-#min-amount,
-#km-amount,
-#fare-amount,
-.amount {
-  width: 100%;
-  text-align: end;
-  font-weight: bold;
-}
-#details-wrapper > div {
-  display: flex;
-}
-#details-wrapper,
-#route-wrapper {
   margin-bottom: 1rem;
 }
-#details-wrapper {
-  margin-bottom: 0.3rem;
-  border-bottom-style: groove;
-  border-bottom-width: 1px;
+.column {
+  pointer-events: all;
 }
-.details-container {
+.container {
+  width: max-content;
+}
+.box {
+  padding: 3rem;
   display: flex;
+  flex-direction: column;
 }
-.rounded-container {
-  border-radius: 20px;
-}
-.footer {
+.label {
+  font-size: large;
+  margin-bottom: 0;
 }
 
-#map {
-  width: 500px;
-  height: 500px;
+.header {
+  font-size: smaller;
+}
+.close-modal {
+  align-self: flex-end;
+  color: black !important;
+}
+.is-divider {
+  margin: 0.9rem 0;
+}
+.material-icons {
+  color: #f14668;
+  margin-right: 1rem;
+}
+
+.result-header {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
+.result-header-text {
+  font-size: xx-large;
+  font-weight: bold;
+}
+.box {
+  width: 50%;
+}
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.result-header {
+  margin: 5rem;
+  display: flex;
+  align-items: center;
+}
+.result-header-icon {
+  font-size: xxx-large;
+}
+.email-span {
+  font-weight: bold;
+}
+/*Mobile breakpoints*/
+@media only screen and (max-width: 768px) {
+  .box {
+    width: 100%;
+  }
 }
 </style>
