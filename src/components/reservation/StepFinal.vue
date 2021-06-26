@@ -45,7 +45,7 @@
       <b-field label="Telefoonnummer" label-position="on-border">
         <b-input
           disabled
-          v-model="phoneNumber"
+          v-model="reservation.userDetails.phonenumber"
           placeholder="Vul je telefoonnummer in"
           icon="phone"
         >
@@ -129,9 +129,30 @@ export default {
     };
   },
   mounted() {
-    //TODO: Total price doesn't update when changing adress
-    console.log(this.reservation.userDetails);
+    this.$store.watch(
+      (state) => {
+        return state.CurrentReservation.currentStep;
+      },
+      (value) => {
+        if (value) {
+          this.phoneNumber = this.reservation.userDetails.phonenumber;
+          this.time = new Date(this.reservation.userDetails.time);
 
+          this.date = new Date(this.reservation.userDetails.date);
+        }
+      }
+    );
+
+    this.$store.watch(
+      (state) => {
+        return state.CurrentReservation.reservation;
+      },
+      (value) => {
+        if (value) {
+          this.totalPrice = this.reservation.reservation.farePrice;
+        }
+      }
+    );
     this.phoneNumber = this.reservation.userDetails.phonenumber;
     this.time = new Date(this.reservation.userDetails.time);
 
@@ -144,11 +165,9 @@ export default {
         ? (this.DiscountButtonIsDisabled = false)
         : (this.DiscountButtonIsDisabled = true);
     },
-    
   },
   methods: {
     handlePayment() {
-      console.log(this.reservation.reservation.farePrice);
       Reservation.Payment(this.reservation.reservation.farePrice).then(
         (response) => {
           window.open(response.data, "_self");
@@ -179,7 +198,7 @@ export default {
             actionText: "OK",
             position: "is-bottom",
             message: "Kortingscode niet geldig",
-            duration: 1500
+            duration: 1500,
           });
 
           this.discountCode = "";
@@ -189,7 +208,7 @@ export default {
       this.discountCode = "";
       this.discount = 0;
       this.discountIsCalculated = false;
-      this.totalPrice = this.reservation.reservation.farePrice
+      this.totalPrice = this.reservation.reservation.farePrice;
     },
   },
 };
