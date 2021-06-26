@@ -1,3 +1,5 @@
+import { defaultState } from './../defaultState/currentReservation'
+
 const state = {
   reservation: [],
   userDetails: {
@@ -73,6 +75,9 @@ const actions = {
   changeNextVisibility({ commit }) {
     commit("changeNextVisibility");
   },
+  resetState({commit}) {
+    commit("resetState")
+  }
 };
 const mutations = {
   setReservation: (state, reservation) => (state.reservation = reservation),
@@ -115,6 +120,9 @@ const mutations = {
     state.currentStep === 2
       ? (state.nextIsVisible = false)
       : (state.nextIsVisible = true),
+  resetState: (state) => {
+    Object.assign(state, defaultState)
+  }
 };
 
 const handleStep = (state) => {
