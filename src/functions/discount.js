@@ -1,23 +1,26 @@
+/* eslint-disable */
 import Discount from "./../Api/Discount";
-
-export const discountIsValid = () =>
-  new Promise(async (resolve, reject) => {
-    if (!moment(discount.expire_date).isBefore(moment()))
-      return reject({
+import moment from 'moment'
+export const discountIsValid = (userId, discount) =>
+  new Promise( async(resolve) => {
+    if (!moment().isBefore(moment(discount.expire_date)))
+      return resolve({
         success: false,
-        errorMsg: "Kortingscode niet meer geldid",
+        errorMsg: "Kortingscode niet meer geldig",
       });
 
-    const discountUsers = await Discount.getDiscountUser();
+    const {data} = await Discount.getDiscountUser();
+    
+    if(data.length === 0) return resolve({success: true})
 
-    const usedDiscount = discountUsers.filter(
+    const usedDiscount = data.filter(
       (userDiscount) =>
         userDiscount.user_id === userId &&
         userDiscount.discount_id === discount.id
     );
-
+    
     if (usedDiscount !== undefined)
-      return reject({
+      return resolve({
         success: false,
         errorMsg: "Kortingscode is al gebruikt",
       });

@@ -108,9 +108,11 @@
 import { mapGetters } from "vuex";
 import Reservation from "./../../Api/Reservation";
 import Discount from "./../../Api/Discount";
+import { discountIsValid } from "./../../functions/discount";
 export default {
   computed: {
     ...mapGetters("CurrentReservation", ["reservation", "userDetails"]),
+    ...mapGetters(["user"]),
   },
   data() {
     return {
@@ -176,20 +178,37 @@ export default {
     },
     getDiscount() {
       Discount.getDiscount(this.discountCode)
-        .then((response) => {
-          if (response.data.type === 0) {
-            this.discount = (
-              (this.reservation.reservation.farePrice / 100) *
-              response.data.value
-            ).toFixed(2);
-          } else if (response.data.type === 1) {
-            this.discount = response.data.value;
-          }
+        .then(async (response) => {
+          const IsValid = await discountIsValid(
+            this.user.id,
+            response.data
+          );
 
-          this.totalPrice = (
-            this.reservation.reservation.farePrice - this.discount
-          ).toFixed(2);
-          this.discountIsCalculated = true;
+          if (IsValid.success === false) {
+            this.$buefy.snackbar.open({
+              type: "is-danger",
+              actionText: "OK",
+              position: "is-bottom",
+              message: IsValid.errorMsg,
+              duration: 1500,
+            });
+
+            this.discountCode = "";
+          } else {
+            if (response.data.type === 0) {
+              this.discount = (
+                (this.reservation.reservation.farePrice / 100) *
+                response.data.value
+              ).toFixed(2);
+            } else if (response.data.type === 1) {
+              this.discount = response.data.value;
+            }
+
+            this.totalPrice = (
+              this.reservation.reservation.farePrice - this.discount
+            ).toFixed(2);
+            this.discountIsCalculated = true;
+          }
         })
         .catch((error) => {
           console.log(error);
