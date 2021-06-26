@@ -12,6 +12,6 @@ export default {
 
         await Csrf.getCookie
 
-        return Api.get('/discount_user')
+        return Api.get('/discount-user')
     }
 }
