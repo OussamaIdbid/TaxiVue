@@ -7,7 +7,11 @@ export default {
         await Csrf.getCookie()
 
         return Api.get(`/discount/${code}`);
-        
+    },
+    async getDiscountUser() {
 
+        await Csrf.getCookie
+
+        return Api.get('/discount_user')
     }
 }
