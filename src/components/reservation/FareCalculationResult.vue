@@ -40,7 +40,11 @@ export default {
     ...mapGetters("CurrentReservation", ["isCalculated"]),
   },
   methods: {
-    ...mapActions("CurrentReservation", ["resetOrder", "setCalculating"]),
+    ...mapActions("CurrentReservation", [
+      "resetOrder",
+      "setCalculating",
+      "resetState",
+    ]),
     backToHome() {
       this.$router.push({ name: "Home" });
       // localStorage.removeItem("calculated", false)
@@ -65,8 +69,7 @@ export default {
           message: "Weet je zeker dat je je reservering wilt annuleren?",
           cancelText: "Nee",
           onAction: () => {
-            this.setCalculating(false);
-            this.resetOrder();
+            this.resetState();
             next();
           },
         });
@@ -77,16 +80,18 @@ export default {
     }
   },
   mounted() {
-    if (this.isCalculated === false) {
-      this.$router.push({ name: "Home" });
+    if (!this.authenticated) {
+      this.$router.push({
+        name: "Login",
+        query: { redirect: this.$route.name },
+      });
     } else {
-      console.log("fdfdf");
-      setTimeout(() => {
+      if (this.isCalculated === false) {
+        this.$router.push({ name: "Home" });
+      } else {
         document.getElementById("loader").classList.remove("is-active");
-        localStorage.setItem("calculated", true);
-      }, 3000);
-
-      window.scrollTo(0, 0);
+        window.scrollTo(0, 0);
+      }
     }
   },
 };

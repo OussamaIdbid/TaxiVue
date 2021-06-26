@@ -183,7 +183,6 @@
 
                       <div class="media-content">
                         <h6>{{ props.option.place_name }}</h6>
-
                       </div>
                     </div>
                   </template>
@@ -197,7 +196,14 @@
                 icon="user-friends"
                 icon-pack="fas"
                 v-model="categorySelect"
-                v-on:input="FareCalculateValidation(StartInput, EndInput, categorySelect, 'calculate-fare')"
+                v-on:input="
+                  FareCalculateValidation(
+                    StartInput,
+                    EndInput,
+                    categorySelect,
+                    'calculate-fare'
+                  )
+                "
               >
                 <option
                   aria-placeholder="Aantal personen"
@@ -228,11 +234,14 @@ import axios from "axios";
 import debounce from "lodash/debounce";
 import { MapBoxKey } from "../../constants/keys";
 import { CATEGORIES } from "../../constants/mapBox/PlaceCategories";
+import { SEARCH_API_BASE } from "../../constants/mapBox/BaseRequests";
 import {
-  SEARCH_API_BASE
-} from "../../constants/mapBox/BaseRequests";
-import { getRoute, calculateTaxiFare, timeConvertToString, FareCalculateValidation} from "./../../functions/reservationCalculation";
-import { mapActions,mapGetters } from "vuex";
+  getRoute,
+  calculateTaxiFare,
+  timeConvertToString,
+  FareCalculateValidation,
+} from "./../../functions/reservationCalculation";
+import { mapActions, mapGetters } from "vuex";
 export default {
   name: "FareCalculation",
   data() {
@@ -255,55 +264,73 @@ export default {
       isFetchingStart: false,
       isFetchingEnd: false,
       CATEGORIES: CATEGORIES,
-      FareCalculateValidation: FareCalculateValidation
+      FareCalculateValidation: FareCalculateValidation,
     };
   },
-  created() {
-
-  },
-  mounted() {
-  },
+  created() {},
+  mounted() {},
   computed: {
     ...mapGetters("CurrentReservation", ["reservation"]),
   },
 
   methods: {
-    ...mapActions('CurrentReservation', ['pushReservation','setCalculating']),
+    ...mapActions("CurrentReservation", ["pushReservation", "setCalculating"]),
     processForm() {
-      document.getElementById("loader").classList.add("is-active");
-      getRoute(this.selectedStart, this.selectedEnd).then((response) => {
-        console.log(response)
-        const distanceInKm = Math.round(response.data.routes[0].distance / 1000)
-        const distanceInKmString = distanceInKm + 'km' 
-        const travelTimeInMin = response.data.routes[0].duration / 60
-        const travelTimeInHours = timeConvertToString(travelTimeInMin);
-        console.log(this.categorySelect.text)
+      getRoute(this.selectedStart, this.selectedEnd)
+        .then((response) => {
+          console.log(response);
+          const distanceInKm = Math.round(
+            response.data.routes[0].distance / 1000
+          );
+          const distanceInKmString = distanceInKm + "km";
+          const travelTimeInMin = response.data.routes[0].duration / 60;
+          const travelTimeInHours = timeConvertToString(travelTimeInMin);
+          console.log(this.categorySelect.text);
 
-        const farePrice = calculateTaxiFare(distanceInKm, travelTimeInMin, this.categorySelect.text)
+          const farePrice = calculateTaxiFare(
+            distanceInKm,
+            travelTimeInMin,
+            this.categorySelect.text
+          );
 
-        this.pushReservation({
-          StartObject: this.selectedStart,
-          EndObject: this.selectedEnd,
-          routeObject: response.data,
-          amountOfPeople: this.categorySelect.text,
-          travelTime: travelTimeInHours,
-          farePrice: farePrice,
-          distance: distanceInKmString
+          this.pushReservation({
+            StartObject: this.selectedStart,
+            EndObject: this.selectedEnd,
+            routeObject: response.data,
+            amountOfPeople: this.categorySelect.text,
+            travelTime: travelTimeInHours,
+            farePrice: farePrice,
+            distance: distanceInKmString,
+          });
         })
-
-        this.setCalculating(true)
-      })
-      .then(this.$router.push({name: "FareCalculationResult"})
-      )
+        .then(() => {
+          document.getElementById("loader").classList.add("is-active");
+          this.setCalculating(true);
+        })
+        .then(() => {
+          setTimeout(() => {
+            this.$router.push({ name: "FareCalculationResult" });
+          }, 1000);
+        });
     },
     assignTagStart(slot) {
       this.selectedStart = slot;
-      FareCalculateValidation(this.StartInput, this.EndInput, this.categorySelect, 'calculate-fare');
+      FareCalculateValidation(
+        this.StartInput,
+        this.EndInput,
+        this.categorySelect,
+        "calculate-fare"
+      );
     },
     assignTagEnd: function (slot) {
       this.selectedEnd = slot;
 
-      FareCalculateValidation(this.StartInput, this.EndInput, this.categorySelect, 'calculate-fare');
+      FareCalculateValidation(
+        this.StartInput,
+        this.EndInput,
+        this.categorySelect,
+        "calculate-fare"
+      );
     },
     getAsyncDataStart: debounce(function () {
       this.placesStart = [];
@@ -329,7 +356,12 @@ export default {
         .finally(() => {
           this.isFetchingStart = false;
         });
-      FareCalculateValidation(this.StartInput, this.EndInput, this.categorySelect, 'calculate-fare');
+      FareCalculateValidation(
+        this.StartInput,
+        this.EndInput,
+        this.categorySelect,
+        "calculate-fare"
+      );
     }, 500),
 
     getAsyncDataEnd: debounce(function () {
@@ -357,7 +389,12 @@ export default {
         .finally(() => {
           this.isFetchingEnd = false;
         });
-      FareCalculateValidation(this.StartInput, this.EndInput, this.categorySelect, 'calculate-fare');
+      FareCalculateValidation(
+        this.StartInput,
+        this.EndInput,
+        this.categorySelect,
+        "calculate-fare"
+      );
     }, 500),
   },
 };
