@@ -1,6 +1,7 @@
 /* eslint-disable */
 import Discount from "./../Api/Discount";
 import moment from 'moment'
+
 export const discountIsValid = (userId, discount) =>
   new Promise( async(resolve) => {
     if (!moment().isBefore(moment(discount.expire_date)))
