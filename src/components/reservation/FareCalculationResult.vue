@@ -61,6 +61,8 @@ export default {
       if (this.isCalculated === false) {
         next();
       } else {
+        document.getElementById("loader").classList.remove("is-active");
+
         this.$buefy.snackbar.open({
           indefinite: true,
           type: "is-danger",
@@ -76,6 +78,7 @@ export default {
       }
     } else if (!this.authenticated) {
       this.setCalculating(false);
+      document.getElementById("loader").classList.remove("is-active");
       next();
     }
   },
