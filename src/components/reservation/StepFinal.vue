@@ -105,13 +105,19 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import Reservation from "./../../Api/Reservation";
 import Discount from "./../../Api/Discount";
 import { discountIsValid } from "./../../functions/discount";
 export default {
   computed: {
-    ...mapGetters("CurrentReservation", ["reservation", "userDetails"]),
+    ...mapGetters("CurrentReservation", [
+      "reservation",
+      "userDetails",
+      "currentDiscount",
+      "discountIsUsed",
+      "loading"
+    ]),
     ...mapGetters(["user"]),
   },
   data() {
@@ -139,12 +145,10 @@ export default {
         if (value) {
           this.phoneNumber = this.reservation.userDetails.phonenumber;
           this.time = new Date(this.reservation.userDetails.time);
-
           this.date = new Date(this.reservation.userDetails.date);
         }
       }
     );
-
     this.$store.watch(
       (state) => {
         return state.CurrentReservation.reservation;
@@ -155,6 +159,10 @@ export default {
         }
       }
     );
+    if (this.discountIsUsed) {
+      this.discountCode = this.currentDiscount;
+      this.getDiscount();
+    }
     this.phoneNumber = this.reservation.userDetails.phonenumber;
     this.time = new Date(this.reservation.userDetails.time);
 
@@ -163,12 +171,18 @@ export default {
   },
   watch: {
     discountCode: function (val) {
+      this.setCurrentDiscount(val);
       val.length > 0
         ? (this.DiscountButtonIsDisabled = false)
         : (this.DiscountButtonIsDisabled = true);
     },
   },
   methods: {
+    ...mapActions("CurrentReservation", [
+      "setDiscountIsUsed",
+      "setCurrentDiscount",
+      "setLoading",
+    ]),
     handlePayment() {
       Reservation.Payment(this.reservation.reservation.farePrice).then(
         (response) => {
@@ -177,12 +191,10 @@ export default {
       );
     },
     getDiscount() {
+      this.setLoading(true);
       Discount.getDiscount(this.discountCode)
         .then(async (response) => {
-          const IsValid = await discountIsValid(
-            this.user.id,
-            response.data
-          );
+          const IsValid = await discountIsValid(this.user.id, response.data);
 
           if (IsValid.success === false) {
             this.$buefy.snackbar.open({
@@ -192,7 +204,7 @@ export default {
               message: IsValid.errorMsg,
               duration: 1500,
             });
-
+            this.setLoading(false)
             this.discountCode = "";
           } else {
             if (response.data.type === 0) {
@@ -208,10 +220,13 @@ export default {
               this.reservation.reservation.farePrice - this.discount
             ).toFixed(2);
             this.discountIsCalculated = true;
+            this.setDiscountIsUsed(true);
+
+            this.setLoading(false);
           }
         })
-        .catch((error) => {
-          console.log(error);
+        .catch(() => {
+          this.setLoading(false)
           this.$buefy.snackbar.open({
             type: "is-danger",
             actionText: "OK",
@@ -219,12 +234,13 @@ export default {
             message: "Kortingscode niet geldig",
             duration: 1500,
           });
-
+          this.setDiscountIsUsed(false);
           this.discountCode = "";
         });
     },
     resetDiscount() {
       this.discountCode = "";
+      this.setDiscountIsUsed(false);
       this.discount = 0;
       this.discountIsCalculated = false;
       this.totalPrice = this.reservation.reservation.farePrice;

@@ -1,4 +1,4 @@
-import { defaultState } from './../defaultState/currentReservation'
+import { defaultState } from "./../defaultState/currentReservation";
 
 const state = {
   reservation: [],
@@ -7,14 +7,20 @@ const state = {
     time: null,
     phonenumber: "",
   },
+  discountIsUsed: false,
+  currentDiscount: "",
   isCalculated: false,
   nextIsDisabled: false,
   previousIsVisible: false,
   nextIsVisible: true,
   currentStep: 0,
+  loading: false
 };
 
 const getters = {
+  loading(state) {
+    return state.loading
+  },
   reservation(state) {
     return state;
   },
@@ -36,9 +42,18 @@ const getters = {
   nextIsVisible(state) {
     return state.nextIsVisible;
   },
+  discountIsUsed(state) {
+    return state.discountIsUsed;
+  },
+  currentDiscount(state) {
+    return state.currentDiscount;
+  },
 };
 
 const actions = {
+  setLoading({commit}, loading) {
+    commit("setLoading", loading);
+  },
   pushReservation({ commit }, reservation) {
     commit("setReservation", reservation);
   },
@@ -75,11 +90,18 @@ const actions = {
   changeNextVisibility({ commit }) {
     commit("changeNextVisibility");
   },
-  resetState({commit}) {
-    commit("resetState")
-  }
+  resetState({ commit }) {
+    commit("resetState");
+  },
+  setCurrentDiscount({ commit }, discount) {
+    commit("setCurrentDiscount", discount);
+  },
+  setDiscountIsUsed({ commit }, discountIsUsed) {
+    commit("setDiscountIsUsed", discountIsUsed);
+  },
 };
 const mutations = {
+  setLoading: (state, loading) => (state.loading = loading),
   setReservation: (state, reservation) => (state.reservation = reservation),
   setUserDetails: (state, userDetails) => (state.userDetails = userDetails),
   setCalculating: (state, boolean) => (state.isCalculated = boolean),
@@ -121,8 +143,12 @@ const mutations = {
       ? (state.nextIsVisible = false)
       : (state.nextIsVisible = true),
   resetState: (state) => {
-    Object.assign(state, defaultState)
-  }
+    Object.assign(state, defaultState);
+  },
+  setCurrentDiscount: (state, currentDiscount) =>
+    (state.currentDiscount = currentDiscount),
+    setDiscountIsUsed: (state, discountIsUsed) =>
+    (state.discountIsUsed = discountIsUsed),
 };
 
 const handleStep = (state) => {
