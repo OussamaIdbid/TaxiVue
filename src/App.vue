@@ -1,13 +1,21 @@
 <template>
   <div id="app">
-    <div id="loader" class="pageloader is-danger"><span class="title"></span></div>
+    <div id="loader" class="pageloader is-danger">
+      <span class="title"></span>
+    </div>
     <Navbar />
     <router-view />
     <Footer />
+    <b-loading
+      :is-full-page="true"
+      v-model="loading"
+      :can-cancel="true"
+    ></b-loading>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import Navbar from "./components/layouts/Navbar";
 import Footer from "./components/layouts/Footer";
 
@@ -19,6 +27,10 @@ export default {
     Footer,
 
     //Demo
+  },
+  computed: {
+    ...mapGetters("CurrentReservation", ["loading"
+    ]),
   },
 };
 </script>
@@ -41,14 +53,13 @@ body {
   flex-direction: column;
 }
 .step-items {
-    width:100% !important;
+  width: 100% !important;
 }
 .steps .step-item .step-marker {
-    position:initial;
+  position: initial;
 }
 .steps .step-item .step-details {
-    margin-top:0 !important;
-
+  margin-top: 0 !important;
 }
 .Site-content {
   flex: 1;
