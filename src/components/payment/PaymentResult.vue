@@ -185,7 +185,6 @@ export default {
         status: "Closed",
         user_id: userID,
       }).then((response) => {
-        console.log(response);
         this.ReservationUserId = response.data.user_id;
         this.ReservationOrderId = response.data.payment_id;
         this.orderId = response.data.order_id;
