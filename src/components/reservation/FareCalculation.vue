@@ -274,7 +274,11 @@ export default {
   },
 
   methods: {
-    ...mapActions("CurrentReservation", ["pushReservation", "setCalculating"]),
+    ...mapActions("CurrentReservation", [
+      "pushReservation",
+      "setCalculating",
+      "resetState",
+    ]),
     processForm() {
       getRoute(this.selectedStart, this.selectedEnd)
         .then((response) => {
@@ -311,6 +315,17 @@ export default {
           setTimeout(() => {
             this.$router.push({ name: "FareCalculationResult" });
           }, 1000);
+        })
+        .catch(() => {
+          document.getElementById("loader").classList.remove("is-active");
+          this.resetState();
+            this.$buefy.snackbar.open({
+              type: "is-danger",
+              actionText: "OK",
+              position: "is-bottom",
+              message: "Er is iets fout gegaan. probeer het opnieuw",
+              duration: 1500,
+            });
         });
     },
     assignTagStart(slot) {
